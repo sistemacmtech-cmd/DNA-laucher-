@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#030712" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DNA Launcher" />
+  <title>DNA Launcher OS — Hologram PWA</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300f5d4'/%3E%3Cstop offset='50%25' stop-color='%2338bdf8'/%3E%3Cstop offset='100%25' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='115' fill='%23030712'/%3E%3Ccircle cx='256' cy='256' r='175' fill='none' stroke='url(%23g)' stroke-width='24'/%3E%3Cpath d='M180 140 C332 200, 180 312, 332 372 M332 140 C180 200, 332 312, 180 372' stroke='%23ffffff' stroke-width='20' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <style>
+    :root {
+      --bg-primary: #030712;
+      --glass-bg: rgba(10, 18, 34, 0.56);
+      --glass-border: rgba(56, 189, 248, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #00f5d4;
+      --accent-2: #d946ef;
+      --holo-cyan: #00f5d4;
+      --holo-magenta: #ff2a85;
+      --holo-blue: #38bdf8;
+      --icon-size: 62px;
+      --icon-radius: 20px;
+      --grid-cols: 4;
+      --wallpaper: radial-gradient(circle at 20% 15%, rgba(0, 245, 212, 0.16), transparent 42%),
+                   radial-gradient(circle at 82% 25%, rgba(217, 70, 239, 0.18), transparent 45%),
+                   radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.22), transparent 55%),
+                   linear-gradient(160deg, #02040a 0%, #071124 48%, #040814 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+    }
+
+    /* Fundo Dinâmico */
+    #wallpaper-layer {
+      position: fixed;
+      inset: 0;
+      background: var(--wallpaper);
+      z-index: 0;
+      transition: background 0.5s ease;
+    }
+
+    #grid-floor {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 245, 212, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.045) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at 50% 50%, black 35%, transparent 90%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Container Principal */
+    #launcher-shell {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 520px;
+      height: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: env(safe-area-inset-top, 10px) 16px env(safe-area-inset-bottom, 14px);
+    }
+
+    /* Barra de Status */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--text-main);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dna-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(0, 245, 212, 0.12);
+      border: 1px solid rgba(0, 245, 212, 0.35);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(0, 245, 212, 0.6);
+    }
+
+    .status-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .holo-pill-btn {
+      background: rgba(0, 245, 212, 0.14);
+      border: 1px solid rgba(0, 245, 212, 0.45);
+      color: #00f5d4;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0, 245, 212, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .holo-pill-btn.off {
+      background: rgba(148, 163, 184, 0.12);
+      border-color: rgba(148, 163, 184, 0.3);
+      color: #94a3b8;
+      box-shadow: none;
+    }
+
+    #install-pwa-btn {
+      display: none;
+      background: linear-gradient(135deg, #00f5d4, #38bdf8);
+      color: #030712;
+      border: none;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Área Central com Paginação */
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      gap: 12px;
+    }
+
+    /* Widget Superior Estilo DNA */
+    .dna-widgets-row {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 10px;
+    }
+
+    .widget-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 12px 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .clock-big {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      background: linear-gradient(90deg, #ffffff, #7dd3fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .date-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: capitalize;
+    }
+
+    .weather-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .music-widget {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .music-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-artist {
+      font-size: 10px;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .m-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .m-btn.play {
+      background: linear-gradient(135deg, var(--accent), var(--holo-blue));
+      color: #030712;
+      font-weight: 800;
+      border: none;
+    }
+
+    /* Barra de Busca Rápida */
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 9px 14px;
+      backdrop-filter: blur(14px);
+    }
+
+    .search-pill input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .search-pill input::placeholder {
+      color: #64748b;
+    }
+
+    /* Grade de Apps */
+    .apps-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(var(--grid-cols), 1fr);
+      align-content: start;
+      gap: 16px 10px;
+      padding: 6px 2px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      perspective: 900px;
+    }
+
+    .apps-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Item de App Padrão */
+    .app-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d;
+    }
+
+    .app-item:active {
+      transform: scale(0.91);
+    }
+
+    .app-icon-wrap {
+      width: var(--icon-size);
+      height: var(--icon-size);
+      border-radius: var(--icon-radius);
+      display: grid;
+      place-items: center;
+      position: relative;
+      font-size: 27px;
+      background: var(--app-bg, linear-gradient(135deg, #1e293b, #0f172a));
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      transition: all 0.3s ease;
+    }
+
+    .app-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #e2e8f0;
+      text-align: center;
+      max-width: 74px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    }
+
+    /* =========================================================
+       MODO HOLOGRAMA 3D (ATIVADO POR PADRÃO)
+       ========================================================= */
+    body.holo-mode .app-item {
+      animation: holoFloat 3.6s ease-in-out infinite;
+      animation-delay: calc(var(--idx, 0) * -0.28s);
+    }
+
+    body.holo-mode .app-icon-wrap {
+      background: radial-gradient(circle at 30% 25%, rgba(0, 245, 212, 0.28), rgba(14, 165, 233, 0.12) 60%, rgba(217, 70, 239, 0.18));
+      border: 1.5px solid rgba(0, 245, 212, 0.65);
+      box-shadow:
+        0 0 18px rgba(0, 245, 212, 0.38),
+        0 0 32px rgba(56, 189, 248, 0.2),
+        inset 0 0 14px rgba(0, 245, 212, 0.35);
+      backdrop-filter: blur(6px);
+      overflow: visible;
+    }
+
+    /* Scanlines Holográficas */
+    body.holo-mode .app-icon-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 245, 212, 0.22) 0px,
+        rgba(0, 245, 212, 0.22) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      pointer-events: none;
+      animation: scanMove 2.8s linear infinite;
+      opacity: 0.75;
+    }
+
+    /* Feixe / Base Emissora do Holograma */
+    body.holo-mode .app-icon-wrap::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 14%;
+      width: 72%;
+      height: 5px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 245, 212, 0.95) 0%, rgba(56, 189, 248, 0.4) 55%, transparent 80%);
+      filter: blur(1.5px);
+      box-shadow: 0 0 12px rgba(0, 245, 212, 0.9);
+      pointer-events: none;
+    }
+
+    /* Aberração Cromática RGB nos Ícones */
+    body.holo-mode .app-glyph {
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(-1.5px 0 0 rgba(255, 42, 133, 0.85))
+              drop-shadow(1.5px 0 0 rgba(0, 245, 212, 0.9))
+              drop-shadow(0 0 8px rgba(56, 189, 248, 0.85));
+      transform: translateZ(14px);
+    }
+
+    body.holo-mode .app-label {
+      color: #a5f3fc;
+      text-shadow: 0 0 8px rgba(0, 245, 212, 0.65);
+      letter-spacing: 0.2px;
+    }
+
+    /* Variantes de Espectro Holográfico */
+    body.holo-cyan .app-icon-wrap {
+      border-color: rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), inset 0 0 14px rgba(56, 189, 248, 0.35);
+    }
+
+    body.holo-solar .app-icon-wrap {
+      background: radial-gradient(circle at 30% 25%, rgba(251, 191, 36, 0.28), rgba(244, 63, 94, 0.16));
+      border-color: rgba(251, 191, 36, 0.8);
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.42), inset 0 0 14px rgba(244, 63, 94, 0.35);
+    }
+
+    body.holo-solar .app-label {
+      color: #fde68a;
+      text-shadow: 0 0 8px rgba(251, 191, 36, 0.65);
+    }
+
+    @keyframes holoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes scanMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 24px; }
+    }
+
+    /* Dock Inferior */
+    .dock-bar {
+      background: rgba(10, 18, 34, 0.72);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(0, 245, 212, 0.28);
+      border-radius: 26px;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .dock-bar .app-item {
+      gap: 0;
+    }
+
+    .dock-bar .app-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 17px;
+      font-size: 23px;
+    }
+
+    /* Gaveta de Apps & Modais */
+    .overlay-sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      display: none;
+      flex-direction: column;
+      padding: env(safe-area-inset-top, 16px) 18px env(safe-area-inset-bottom, 18px);
+      animation: fadeUp 0.22s ease;
+    }
+
+    .overlay-sheet.open {
+      display: flex;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .sheet-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.3px;
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Mini-Apps Internos */
+    .mini-app-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .calc-display {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: right;
+      font-size: 32px;
+      font-weight: 800;
+      color: #00f5d4;
+      overflow-x: auto;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .calc-key {
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(30, 41, 59, 0.7);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calc-key.op {
+      background: rgba(0, 245, 212, 0.18);
+      color: #00f5d4;
+      border-color: rgba(0, 245, 212, 0.4);
+    }
+
+    .notes-area {
+      flex: 1;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      border-radius: 16px;
+      padding: 14px;
+      color: #f8fafc;
+      font-size: 15px;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+    }
+
+    .setting-group {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 245, 212, 0.35);
+      background: rgba(0, 245, 212, 0.1);
+      color: #e2e8f0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: #00f5d4;
+      color: #030712;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body class="holo-mode">
+  <div id="wallpaper-layer"></div>
+  <div id="grid-floor"></div>
+
+  <div id="launcher-shell">
+    <!-- Barra Superior -->
+    <header class="status-bar">
+      <div class="status-left">
+        <span class="dna-badge">🧬 DNA OS</span>
+        <span id="status-clock">20:34</span>
+      </div>
+      <div class="status-actions">
+        <button id="install-pwa-btn">📲 INSTALAR</button>
+        <button id="holo-toggle-btn" class="holo-pill-btn">HOLO ON</button>
+        <span id="battery-txt">100% ⚡</span>
+      </div>
+    </header>
+
+    <!-- Área Principal -->
+    <main class="workspace">
+      <!-- Widgets -->
+      <section class="dna-widgets-row">
+        <div class="widget-card">
+          <div class="clock-big" id="widget-clock">20:34</div>
+          <div class="date-sub" id="widget-date">domingo, 22 de nov.</div>
+          <div class="weather-pill">🌌 23°C • Céu Limpo</div>
+        </div>
+
+        <div class="widget-card music-widget">
+          <div>
+            <div class="music-title" id="track-title">Hologram Pulse</div>
+            <div class="music-artist" id="track-artist">DNA Synth Audio</div>
+          </div>
+          <div class="music-controls">
+            <button class="m-btn" id="prev-track">⏮</button>
+            <button class="m-btn play" id="play-track">▶</button>
+            <button class="m-btn" id="next-track">⏭</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Busca -->
+      <div class="search-pill">
+        <span>🔍</span>
+        <input type="text" id="app-search" placeholder="Buscar app holográfico ou na web..." autocomplete="off" />
+      </div>
+
+      <!-- Grade de Aplicativos -->
+      <section class="apps-grid" id="home-apps-grid"></section>
+    </main>
+
+    <!-- Dock Inferior -->
+    <footer class="dock-bar" id="dock-bar"></footer>
+  </div>
+
+  <!-- Gaveta Completa de Apps -->
+  <div class="overlay-sheet" id="drawer-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title">🧬 Gaveta Holográfica DNA</span>
+      <button class="close-btn" onclick="closeSheet('drawer-sheet')">Fechar ✕</button>
+    </div>
+    <div class="search-pill" style="margin-bottom: 12px;">
+      <span>🔎</span>
+      <input type="text" id="drawer-search" placeholder="Filtrar todos os aplicativos..." autocomplete="off" />
+    </div>
+    <div class="apps-grid" id="drawer-apps-grid"></div>
+  </div>
+
+  <!-- Janela de Mini-Apps & Ajustes -->
+  <div class="overlay-sheet" id="app-modal">
+    <div class="sheet-header">
+      <span class="sheet-title" id="modal-title">Aplicativo</span>
+      <button class="close-btn" onclick="closeSheet('app-modal')">Voltar ✕</button>
+    </div>
+    <div class="mini-app-body" id="modal-body"></div>
+  </div>
+
+  <script>
+    // Registro do Service Worker para PWA 100% funcional no GitHub Pages
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    // Prompt de Instalação PWA
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-pwa-btn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
+
+    // Catálogo de Apps
+    const APPS = [
+      { id: 'calc', name: 'Calculadora', icon: '🧮', bg: 'linear-gradient(135deg,#0ea5e9,#2563eb)', action: () => openCalculator() },
+      { id: 'notes', name: 'Notas Holo', icon: '📝', bg: 'linear-gradient(135deg,#f59e0b,#d97706)', action: () => openNotes() },
+      { id: 'timer', name: 'Cronômetro', icon: '⏱️', bg: 'linear-gradient(135deg,#10b981,#059669)', action: () => openTimer() },
+      { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', bg: 'linear-gradient(135deg,#6366f1,#4f46e5)', action: () => openSettings() },
+      { id: 'whatsapp', name: 'WhatsApp', icon: '💬', bg: 'linear-gradient(135deg,#22c55e,#15803d)', url: 'https://web.whatsapp.com' },
+      { id: 'youtube', name: 'YouTube', icon: '▶️', bg: 'linear-gradient(135deg,#ef4444,#b91c1c)', url: 'https://m.youtube.com' },
+      { id: 'maps', name: 'Mapas GPS', icon: '🗺️', bg: 'linear-gradient(135deg,#14b8a6,#0f766e)', url: 'https://maps.google.com' },
+      { id: 'github', name: 'GitHub', icon: '🐙', bg: 'linear-gradient(135deg,#334155,#0f172a)', url: 'https://github.com' },
+      { id: 'camera', name: 'Holo Cam', icon: '📸', bg: 'linear-gradient(135deg,#ec4899,#be185d)', action: () => openCamera() },
+      { id: 'spotify', name: 'Música', icon: '🎧', bg: 'linear-gradient(135deg,#10b981,#047857)', action: () => toggleMusic() },
+      { id: 'weather', name: 'Clima 3D', icon: '🌤️', bg: 'linear-gradient(135deg,#38bdf8,#0284c7)', action: () => openWeather() },
+      { id: 'browser', name: 'Navegador', icon: '🌐', bg: 'linear-gradient(135deg,#8b5cf6,#6d28d9)', url: 'https://www.google.com' }
+    ];
+
+    const DOCK_IDS = ['whatsapp', 'browser', 'drawer', 'calc', 'settings'];
+
+    // Estado Salvo no LocalStorage
+    const state = JSON.parse(localStorage.getItem('dna_launcher_state') || '{}');
+    if (state.holo === undefined) state.holo = true;
+    if (!state.holoTheme) state.holoTheme = 'prismatic';
+    if (!state.cols) state.cols = 4;
+
+    function saveState() {
+      localStorage.setItem('dna_launcher_state', JSON.stringify(state));
+    }
+
+    function applyVisualState() {
+      document.body.classList.toggle('holo-mode', state.holo);
+      document.body.classList.remove('holo-cyan', 'holo-solar');
+      if (state.holoTheme === 'cyan') document.body.classList.add('holo-cyan');
+      if (state.holoTheme === 'solar') document.body.classList.add('holo-solar');
+      document.documentElement.style.setProperty('--grid-cols', state.cols);
+
+      const btn = document.getElementById('holo-toggle-btn');
+      btn.textContent = state.holo ? 'HOLO ON' : 'HOLO OFF';
+      btn.classList.toggle('off', !state.holo);
+    }
+
+    document.getElementById('holo-toggle-btn').addEventListener('click', () => {
+      state.holo = !state.holo;
+      saveState();
+      applyVisualState();
+    });
+
+    // Renderização dos Apps com Efeito Tilt 3D
+    function createAppElement(app, index, hideLabel = false) {
+      const el = document.createElement('div');
+      el.className = 'app-item';
+      el.style.setProperty('--idx', index);
+      el.innerHTML = `
+        <div class="app-icon-wrap" style="--app-bg: ${app.bg}">
+          <span class="app-glyph">${app.icon}</span>
+        </div>
+        ${hideLabel ? '' : `<span class="app-label">${app.name}</span>`}
+      `;
+
+      // Tilt 3D interativo ao passar dedo/mouse
+      el.addEventListener('pointermove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.transform = `perspective(400px) rotateY(${x * 24}deg) rotateX(${-y * 24}deg) scale(1.06)`;
+      });
+
+      el.addEventListener('pointerleave', () => {
+        el.style.transform = '';
+      });
+
+      el.addEventListener('click', () => {
+        if (app.action) app.action();
+        else if (app.url) window.open(app.url, '_blank', 'noopener');
+      });
+
+      return el;
+    }
+
+    function renderHome(filter = '') {
+      const grid = document.getElementById('home-apps-grid');
+      grid.innerHTML = '';
+      const filtered = APPS.filter(a => a.name.toLowerCase().includes(filter.toLowerCase()));
+      filtered.forEach((app, idx) => grid.appendChild(createAppElement(app, idx)));
+    }
+
+    function renderDock() {
+      const dock = document.getElementById('dock-bar');
+      dock.innerHTML = '';
+      DOCK_IDS.forEach((id, idx) => {
+        if (id === 'drawer') {
+          dock.appendChild(createAppElement({
+            name: 'Apps',
+            icon: '💠',
+            bg: 'linear-gradient(135deg,#00f5d4,#38bdf8)',
+            action: () => openDrawer()
+          }, idx, true));
+        } else {
+          const app = APPS.find(a => a.id === id);
+          if (app) dock.appendChild(createAppElement(app, idx, true));
+        }
+      });
+    }
+
+    function openDrawer() {
+      const sheet = document.getElementById('drawer-sheet');
+      const grid = document.getElementById('drawer-apps-grid');
+      const renderList = (q = '') => {
+        grid.innerHTML = '';
+        APPS.filter(a => a.name.toLowerCase().includes(q.toLowerCase()))
+            .forEach((app, i) => grid.appendChild(createAppElement(app, i)));
+      };
+      renderList();
+      document.getElementById('drawer-search').oninput = (e) => renderList(e.target.value);
+      sheet.classList.add('open');
+    }
+
+    function closeSheet(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    // Busca na Tela Inicial
+    document.getElementById('app-search').addEventListener('input', (e) => {
+      renderHome(e.target.value);
+    });
+
+    document.getElementById('app-search').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(e.target.value)}`, '_blank');
+      }
+    });
+
+    // Relógio & Data
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' });
+      document.getElementById('status-clock').textContent = timeStr;
+      document.getElementById('widget-clock').textContent = timeStr;
+      document.getElementById('widget-date').textContent = dateStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Bateria Real (quando suportado pelo navegador)
+    if (navigator.getBattery) {
+      navigator.getBattery().then(bat => {
+        const updateBat = () => {
+          document.getElementById('battery-txt').textContent = `${Math.round(bat.level * 100)}% ${bat.charging ? '⚡' : '🔋'}`;
+        };
+        updateBat();
+        bat.addEventListener('levelchange', updateBat);
+        bat.addEventListener('chargingchange', updateBat);
+      });
+    }
+
+    // Mini Player Sintetizado Web Audio
+    const TRACKS = [
+      { title: 'Hologram Pulse', artist: 'DNA Synth Audio', freq: 220 },
+      { title: 'Neon Orbit 3D', artist: 'Cyber Wave', freq: 261.63 },
+      { title: 'Quantum Horizon', artist: 'Deep Space', freq: 329.63 }
+    ];
+    let trackIdx = 0;
+    let audioCtx = null;
+    let osc = null;
+    let isPlaying = false;
+
+    function toggleMusic() {
+      const btn = document.getElementById('play-track');
+      if (!isPlaying) {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = TRACKS[trackIdx].freq;
+        gain.gain.value = 0.04;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        isPlaying = true;
+        btn.textContent = '⏸';
+      } else {
+        if (osc) osc.stop();
+        isPlaying = false;
+        btn.textContent = '▶';
+      }
+    }
+
+    function changeTrack(dir) {
+      trackIdx = (trackIdx + dir + TRACKS.length) % TRACKS.length;
+      document.getElementById('track-title').textContent = TRACKS[trackIdx].title;
+      document.getElementById('track-artist').textContent = TRACKS[trackIdx].artist;
+      if (isPlaying) {
+        toggleMusic();
+        toggleMusic();
+      }
+    }
+
+    document.getElementById('play-track').onclick = toggleMusic;
+    document.getElementById('prev-track').onclick = () => changeTrack(-1);
+    document.getElementById('next-track').onclick = () => changeTrack(1);
+
+    // Mini-Apps Funcionais
+    function openModal(title, html) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = html;
+      document.getElementById('app-modal').classList.add('open');
+    }
+
+    function openCalculator() {
+      openModal('🧮 Calculadora Holográfica', `
+        <div class="calc-display" id="calc-res">0</div>
+        <div class="calc-grid">
+          ${['7','8','9','/','4','5','6','*','1','2','3','-','C','0','=','+'].map(k =>
+            `<button class="calc-key ${['/','*','-','+','='].includes(k) ? 'op' : ''}" onclick="pressCalc('${k}')">${k}</button>`
+          ).join('')}
+        </div>
+      `);
+    }
+
+    let calcExpr = '';
+    window.pressCalc = (k) => {
+      const disp = document.getElementById('calc-res');
+      if (k === 'C') { calcExpr = ''; disp.textContent = '0'; return; }
+      if (k === '=') {
+        try {
+          calcExpr = String(Function('"use strict";return (' + calcExpr + ')')());
+          disp.textContent = calcExpr;
+        } catch { disp.textContent = 'Erro'; calcExpr = ''; }
+        return;
+      }
+      calcExpr += k;
+      disp.textContent = calcExpr;
+    };
+
+    function openNotes() {
+      const saved = localStorage.getItem('dna_notes') || '';
+      openModal('📝 Notas Holográficas', `
+        <textarea class="notes-area" id="notes-input" placeholder="Digite suas anotações... Salvamento automático ativo.">${saved}</textarea>
+      `);
+      document.getElementById('notes-input').addEventListener('input', (e) => {
+        localStorage.setItem('dna_notes', e.target.value);
+      });
+    }
+
+    function openTimer() {
+      let sec = 0, interval = null;
+      openModal('⏱️ Cronômetro DNA', `
+        <div class="calc-display" style="text-align:center" id="timer-val">00:00</div>
+        <div class="chip-row" style="justify-content:center">
+          <button class="chip active" id="t-start">Iniciar</button>
+          <button class="chip" id="t-pause">Pausar</button>
+          <button class="chip" id="t-reset">Zerar</button>
+        </div>
+      `);
+      const update = () => {
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        const el = document.getElementById('timer-val');
+        if (el) el.textContent = `${m}:${s}`;
+      };
+      document.getElementById('t-start').onclick = () => { if (!interval) interval = setInterval(() => { sec++; update(); }, 1000); };
+      document.getElementById('t-pause').onclick = () => { clearInterval(interval); interval = null; };
+      document.getElementById('t-reset').onclick = () => { clearInterval(interval); interval = null; sec = 0; update(); };
+    }
+
+    function openCamera() {
+      openModal('📸 Holo Cam', `
+        <video id="cam-feed" autoplay playsinline style="width:100%;border-radius:18px;border:1px solid #00f5d4;background:#000"></video>
+        <p style="font-size:12px;color:#94a3b8;text-align:center">Permita o acesso à câmera no navegador para visualizar o visor holográfico.</p>
+      `);
+      navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(stream => { document.getElementById('cam-feed').srcObject = stream; })
+        .catch(() => {});
+    }
+
+    function openWeather() {
+      openModal('🌤️ Previsão Holográfica', `
+        <div class="setting-group">
+          <div style="font-size:36px;font-weight:800;color:#00f5d4">23°C</div>
+          <div>Céu limpo • Sensação térmica 24°C</div>
+          <div style="font-size:12px;color:#94a3b8">Umidade: 58% • Vento: 12 km/h</div>
+        </div>
+      `);
+    }
+
+    function openSettings() {
+      openModal('⚙️ Ajustes DNA Launcher', `
+        <div class="setting-group">
+          <div class="setting-row">
+            <span>Projeção Holográfica 3D</span>
+            <button class="chip ${state.holo ? 'active' : ''}" onclick="toggleHoloSetting()">${state.holo ? 'Ativado' : 'Desativado'}</button>
+          </div>
+          <div>
+            <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">Espectro de Luz do Holograma</div>
+            <div class="chip-row">
+              <button class="chip ${state.holoTheme === 'prismatic' ? 'active' : ''}" onclick="setHoloTheme('prismatic')">Prismático</button>
+              <button class="chip ${state.holoTheme === 'cyan' ? 'active' : ''}" onclick="setHoloTheme('cyan')">Ciano HUD</button>
+              <button class="chip ${state.holoTheme === 'solar' ? 'active' : ''}" onclick="setHoloTheme('solar')">Solar Gold</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">Colunas da Grade</div>
+            <div class="chip-row">
+              <button class="chip ${state.cols === 4 ? 'active' : ''}" onclick="setCols(4)">4 Colunas</button>
+              <button class="chip ${state.cols === 5 ? 'active' : ''}" onclick="setCols(5)">5 Colunas</button>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    window.toggleHoloSetting = () => {
+      state.holo = !state.holo;
+      saveState();
+      applyVisualState();
+      openSettings();
+    };
+
+    window.setHoloTheme = (theme) => {
+      state.holoTheme = theme;
+      saveState();
+      applyVisualState();
+      openSettings();
+    };
+
+    window.setCols = (cols) => {
+      state.cols = cols;
+      saveState();
+      applyVisualState();
+      openSettings();
+    };
+
+    // Inicialização
+    applyVisualState();
+    renderHome();
+    renderDock();
+  </script>
+</body>
+</html>
