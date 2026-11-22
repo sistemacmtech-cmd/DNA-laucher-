@@ -14,7 +14,7 @@
   <style>
     :root {
       --bg-primary: #030712;
-      --glass-bg: rgba(10, 18, 34, 0.56);
+      --glass-bg: rgba(10, 18, 34, 0.58);
       --glass-border: rgba(56, 189, 248, 0.25);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -49,7 +49,6 @@
       color: var(--text-main);
     }
 
-    /* Fundo Dinâmico */
     #wallpaper-layer {
       position: fixed;
       inset: 0;
@@ -70,7 +69,6 @@
       z-index: 1;
     }
 
-    /* Container Principal */
     #launcher-shell {
       position: relative;
       z-index: 2;
@@ -89,23 +87,21 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 4px 10px;
+      padding: 6px 2px 10px;
       font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.3px;
-      color: var(--text-main);
     }
 
     .status-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
     .dna-badge {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       padding: 3px 9px;
       border-radius: 999px;
       background: rgba(0, 245, 212, 0.12);
@@ -119,21 +115,20 @@
     .status-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .holo-pill-btn {
       background: rgba(0, 245, 212, 0.14);
       border: 1px solid rgba(0, 245, 212, 0.45);
       color: #00f5d4;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 999px;
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.4px;
       cursor: pointer;
       box-shadow: 0 0 12px rgba(0, 245, 212, 0.25);
-      transition: all 0.2s ease;
     }
 
     .holo-pill-btn.off {
@@ -148,23 +143,23 @@
       background: linear-gradient(135deg, #00f5d4, #38bdf8);
       color: #030712;
       border: none;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 999px;
       font-size: 10px;
       font-weight: 800;
       cursor: pointer;
     }
 
-    /* Área Central com Paginação */
+    /* Workspace */
     .workspace {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      gap: 12px;
+      gap: 10px;
     }
 
-    /* Widget Superior Estilo DNA */
+    /* Widgets */
     .dna-widgets-row {
       display: grid;
       grid-template-columns: 1.15fr 1fr;
@@ -178,8 +173,6 @@
       border: 1px solid var(--glass-border);
       border-radius: 22px;
       padding: 12px 14px;
-      position: relative;
-      overflow: hidden;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
@@ -260,7 +253,41 @@
       border: none;
     }
 
-    /* Barra de Busca Rápida */
+    /* Ações Rápidas: Indexar Apps + Novo Web App */
+    .quick-holo-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-holo-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(0, 245, 212, 0.1);
+      border: 1px solid rgba(0, 245, 212, 0.35);
+      color: #a5f3fc;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .action-holo-btn.web {
+      background: rgba(217, 70, 239, 0.12);
+      border-color: rgba(217, 70, 239, 0.4);
+      color: #f5d0fe;
+    }
+
+    .action-holo-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Busca */
     .search-pill {
       display: flex;
       align-items: center;
@@ -268,7 +295,7 @@
       background: rgba(15, 23, 42, 0.65);
       border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 16px;
-      padding: 9px 14px;
+      padding: 8px 14px;
       backdrop-filter: blur(14px);
     }
 
@@ -292,7 +319,7 @@
       grid-template-columns: repeat(var(--grid-cols), 1fr);
       align-content: start;
       gap: 16px 10px;
-      padding: 6px 2px;
+      padding: 6px 2px 14px;
       overflow-y: auto;
       scrollbar-width: none;
       perspective: 900px;
@@ -302,7 +329,6 @@
       display: none;
     }
 
-    /* Item de App Padrão */
     .app-item {
       display: flex;
       flex-direction: column;
@@ -331,6 +357,30 @@
       transition: all 0.3s ease;
     }
 
+    .app-icon-wrap img.favicon-holo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+    }
+
+    .web-tag {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      z-index: 4;
+      background: linear-gradient(135deg, #d946ef, #38bdf8);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 6px;
+      letter-spacing: 0.4px;
+      box-shadow: 0 0 8px rgba(217, 70, 239, 0.8);
+    }
+
     .app-label {
       font-size: 11px;
       font-weight: 500;
@@ -344,7 +394,7 @@
     }
 
     /* =========================================================
-       MODO HOLOGRAMA 3D (ATIVADO POR PADRÃO)
+       MODO HOLOGRAMA 3D
        ========================================================= */
     body.holo-mode .app-item {
       animation: holoFloat 3.6s ease-in-out infinite;
@@ -362,7 +412,6 @@
       overflow: visible;
     }
 
-    /* Scanlines Holográficas */
     body.holo-mode .app-icon-wrap::before {
       content: "";
       position: absolute;
@@ -380,7 +429,6 @@
       opacity: 0.75;
     }
 
-    /* Feixe / Base Emissora do Holograma */
     body.holo-mode .app-icon-wrap::after {
       content: "";
       position: absolute;
@@ -395,8 +443,8 @@
       pointer-events: none;
     }
 
-    /* Aberração Cromática RGB nos Ícones */
-    body.holo-mode .app-glyph {
+    body.holo-mode .app-glyph,
+    body.holo-mode .favicon-holo {
       position: relative;
       z-index: 2;
       filter: drop-shadow(-1.5px 0 0 rgba(255, 42, 133, 0.85))
@@ -411,7 +459,6 @@
       letter-spacing: 0.2px;
     }
 
-    /* Variantes de Espectro Holográfico */
     body.holo-cyan .app-icon-wrap {
       border-color: rgba(56, 189, 248, 0.8);
       box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), inset 0 0 14px rgba(56, 189, 248, 0.35);
@@ -463,12 +510,12 @@
       font-size: 23px;
     }
 
-    /* Gaveta de Apps & Modais */
+    /* Modais & Sheets */
     .overlay-sheet {
       position: fixed;
       inset: 0;
       z-index: 30;
-      background: rgba(3, 7, 18, 0.88);
+      background: rgba(3, 7, 18, 0.92);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       display: none;
@@ -490,14 +537,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .sheet-title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--accent);
-      letter-spacing: 0.3px;
     }
 
     .close-btn {
@@ -511,7 +557,6 @@
       cursor: pointer;
     }
 
-    /* Mini-Apps Internos */
     .mini-app-body {
       flex: 1;
       overflow-y: auto;
@@ -520,6 +565,84 @@
       gap: 12px;
     }
 
+    /* Indexador de Apps do Celular */
+    .indexer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .indexer-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 16px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .indexer-card.selected {
+      background: rgba(0, 245, 212, 0.18);
+      border-color: #00f5d4;
+      box-shadow: 0 0 16px rgba(0, 245, 212, 0.28);
+    }
+
+    .indexer-card .ic-emoji {
+      font-size: 26px;
+    }
+
+    .indexer-card .ic-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .indexer-card .ic-status {
+      font-size: 9px;
+      color: #00f5d4;
+      font-weight: 700;
+    }
+
+    /* Formulário Web App Holográfico */
+    .holo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(217, 70, 239, 0.35);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .holo-input {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .holo-primary-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #00f5d4, #38bdf8);
+      color: #030712;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Mini-apps */
     .calc-display {
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(0, 245, 212, 0.3);
@@ -529,7 +652,6 @@
       font-size: 32px;
       font-weight: 800;
       color: #00f5d4;
-      overflow-x: auto;
     }
 
     .calc-grid {
@@ -564,7 +686,6 @@
       padding: 14px;
       color: #f8fafc;
       font-size: 15px;
-      line-height: 1.5;
       resize: none;
       outline: none;
     }
@@ -583,7 +704,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
       font-size: 13px;
     }
 
@@ -619,7 +739,7 @@
     <header class="status-bar">
       <div class="status-left">
         <span class="dna-badge">🧬 DNA OS</span>
-        <span id="status-clock">20:34</span>
+        <span id="status-clock">20:48</span>
       </div>
       <div class="status-actions">
         <button id="install-pwa-btn">📲 INSTALAR</button>
@@ -633,9 +753,9 @@
       <!-- Widgets -->
       <section class="dna-widgets-row">
         <div class="widget-card">
-          <div class="clock-big" id="widget-clock">20:34</div>
+          <div class="clock-big" id="widget-clock">20:48</div>
           <div class="date-sub" id="widget-date">domingo, 22 de nov.</div>
-          <div class="weather-pill">🌌 23°C • Céu Limpo</div>
+          <div class="weather-pill">🌌 23°C • Hologram HUD</div>
         </div>
 
         <div class="widget-card music-widget">
@@ -651,13 +771,19 @@
         </div>
       </section>
 
+      <!-- Botões Rápidos: Indexar Celular + Adicionar Web App em Holograma -->
+      <section class="quick-holo-bar">
+        <button class="action-holo-btn" onclick="openPhoneIndexer()">📥 Indexar Apps do Celular</button>
+        <button class="action-holo-btn web" onclick="openAddWebApp()">🌐 + Web App Holograma</button>
+      </section>
+
       <!-- Busca -->
       <div class="search-pill">
         <span>🔍</span>
-        <input type="text" id="app-search" placeholder="Buscar app holográfico ou na web..." autocomplete="off" />
+        <input type="text" id="app-search" placeholder="Buscar app indexado, web app ou Google..." autocomplete="off" />
       </div>
 
-      <!-- Grade de Aplicativos -->
+      <!-- Grade de Aplicativos em Holograma -->
       <section class="apps-grid" id="home-apps-grid"></section>
     </main>
 
@@ -665,37 +791,37 @@
     <footer class="dock-bar" id="dock-bar"></footer>
   </div>
 
-  <!-- Gaveta Completa de Apps -->
+  <!-- Gaveta Completa -->
   <div class="overlay-sheet" id="drawer-sheet">
     <div class="sheet-header">
-      <span class="sheet-title">🧬 Gaveta Holográfica DNA</span>
+      <span class="sheet-title">🧬 Todos os Apps & Web Apps</span>
       <button class="close-btn" onclick="closeSheet('drawer-sheet')">Fechar ✕</button>
     </div>
     <div class="search-pill" style="margin-bottom: 12px;">
       <span>🔎</span>
-      <input type="text" id="drawer-search" placeholder="Filtrar todos os aplicativos..." autocomplete="off" />
+      <input type="text" id="drawer-search" placeholder="Filtrar aplicativos..." autocomplete="off" />
     </div>
     <div class="apps-grid" id="drawer-apps-grid"></div>
   </div>
 
-  <!-- Janela de Mini-Apps & Ajustes -->
+  <!-- Modal Dinâmico (Indexador, Novo Web App, Mini-Apps, Ajustes) -->
   <div class="overlay-sheet" id="app-modal">
     <div class="sheet-header">
-      <span class="sheet-title" id="modal-title">Aplicativo</span>
-      <button class="close-btn" onclick="closeSheet('app-modal')">Voltar ✕</button>
+      <span class="sheet-title" id="modal-title">DNA OS</span>
+      <button class="close-btn" onclick="closeSheet('app-modal')">Concluir ✕</button>
     </div>
     <div class="mini-app-body" id="modal-body"></div>
   </div>
 
   <script>
-    // Registro do Service Worker para PWA 100% funcional no GitHub Pages
+    // Service Worker Offline
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
 
-    // Prompt de Instalação PWA
+    // Instalação PWA
     let deferredPrompt;
     const installBtn = document.getElementById('install-pwa-btn');
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -712,32 +838,82 @@
       installBtn.style.display = 'none';
     });
 
-    // Catálogo de Apps
-    const APPS = [
+    // Apps Nativos do Sistema DNA
+    const CORE_APPS = [
       { id: 'calc', name: 'Calculadora', icon: '🧮', bg: 'linear-gradient(135deg,#0ea5e9,#2563eb)', action: () => openCalculator() },
       { id: 'notes', name: 'Notas Holo', icon: '📝', bg: 'linear-gradient(135deg,#f59e0b,#d97706)', action: () => openNotes() },
       { id: 'timer', name: 'Cronômetro', icon: '⏱️', bg: 'linear-gradient(135deg,#10b981,#059669)', action: () => openTimer() },
-      { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', bg: 'linear-gradient(135deg,#6366f1,#4f46e5)', action: () => openSettings() },
-      { id: 'whatsapp', name: 'WhatsApp', icon: '💬', bg: 'linear-gradient(135deg,#22c55e,#15803d)', url: 'https://web.whatsapp.com' },
-      { id: 'youtube', name: 'YouTube', icon: '▶️', bg: 'linear-gradient(135deg,#ef4444,#b91c1c)', url: 'https://m.youtube.com' },
-      { id: 'maps', name: 'Mapas GPS', icon: '🗺️', bg: 'linear-gradient(135deg,#14b8a6,#0f766e)', url: 'https://maps.google.com' },
-      { id: 'github', name: 'GitHub', icon: '🐙', bg: 'linear-gradient(135deg,#334155,#0f172a)', url: 'https://github.com' },
       { id: 'camera', name: 'Holo Cam', icon: '📸', bg: 'linear-gradient(135deg,#ec4899,#be185d)', action: () => openCamera() },
-      { id: 'spotify', name: 'Música', icon: '🎧', bg: 'linear-gradient(135deg,#10b981,#047857)', action: () => toggleMusic() },
-      { id: 'weather', name: 'Clima 3D', icon: '🌤️', bg: 'linear-gradient(135deg,#38bdf8,#0284c7)', action: () => openWeather() },
-      { id: 'browser', name: 'Navegador', icon: '🌐', bg: 'linear-gradient(135deg,#8b5cf6,#6d28d9)', url: 'https://www.google.com' }
+      { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', bg: 'linear-gradient(135deg,#6366f1,#4f46e5)', action: () => openSettings() }
     ];
 
-    const DOCK_IDS = ['whatsapp', 'browser', 'drawer', 'calc', 'settings'];
+    // Catálogo de Apps Populares do Celular para Indexação Instantânea (Android Intent / Deep Links)
+    const PHONE_CATALOG = [
+      { id: 'whatsapp', name: 'WhatsApp', icon: '💬', url: 'https://api.whatsapp.com/send', pkg: 'com.whatsapp' },
+      { id: 'instagram', name: 'Instagram', icon: '📷', url: 'https://www.instagram.com/', pkg: 'com.instagram.android' },
+      { id: 'youtube', name: 'YouTube', icon: '▶️', url: 'https://m.youtube.com/', pkg: 'com.google.android.youtube' },
+      { id: 'tiktok', name: 'TikTok', icon: '🎵', url: 'https://www.tiktok.com/', pkg: 'com.zhiliaoapp.musically' },
+      { id: 'chrome', name: 'Chrome', icon: '🌐', url: 'https://www.google.com/', pkg: 'com.android.chrome' },
+      { id: 'maps', name: 'Google Maps', icon: '🗺️', url: 'https://maps.google.com/', pkg: 'com.google.android.apps.maps' },
+      { id: 'uber', name: 'Uber', icon: '🚘', url: 'https://m.uber.com/', pkg: 'com.ubercab' },
+      { id: '99app', name: '99 Táxi/Pop', icon: '🚖', url: 'https://99app.com/', pkg: 'com.taxis99' },
+      { id: 'spotify', name: 'Spotify', icon: '🎧', url: 'https://open.spotify.com/', pkg: 'com.spotify.music' },
+      { id: 'telegram', name: 'Telegram', icon: '✈️', url: 'https://web.telegram.org/', pkg: 'org.telegram.messenger' },
+      { id: 'nubank', name: 'Nubank', icon: '💜', url: 'https://app.nubank.com.br/', pkg: 'com.nu.production' },
+      { id: 'mercadolivre', name: 'Mercado Livre', icon: '🛍️', url: 'https://www.mercadolivre.com.br/', pkg: 'com.mercadolibre' },
+      { id: 'shopee', name: 'Shopee', icon: '🧡', url: 'https://shopee.com.br/', pkg: 'com.shopee.br' },
+      { id: 'ifood', name: 'iFood', icon: '🍔', url: 'https://www.ifood.com.br/', pkg: 'br.com.brainweb.ifood' },
+      { id: 'gmail', name: 'Gmail', icon: '✉️', url: 'https://mail.google.com/', pkg: 'com.google.android.gm' },
+      { id: 'github', name: 'GitHub', icon: '🐙', url: 'https://github.com/', pkg: 'com.github.android' },
+      { id: 'phone', name: 'Telefone', icon: '📞', url: 'tel:', pkg: 'com.google.android.dialer' },
+      { id: 'playstore', name: 'Play Store', icon: '▶️', url: 'https://play.google.com/store', pkg: 'com.android.vending' }
+    ];
 
-    // Estado Salvo no LocalStorage
-    const state = JSON.parse(localStorage.getItem('dna_launcher_state') || '{}');
+    // Estado Persistente
+    const state = JSON.parse(localStorage.getItem('dna_launcher_v2') || '{}');
     if (state.holo === undefined) state.holo = true;
     if (!state.holoTheme) state.holoTheme = 'prismatic';
     if (!state.cols) state.cols = 4;
+    if (!state.indexedPhoneIds) state.indexedPhoneIds = ['whatsapp', 'instagram', 'youtube', 'maps', 'chrome'];
+    if (!state.customWebApps) state.customWebApps = [];
 
     function saveState() {
-      localStorage.setItem('dna_launcher_state', JSON.stringify(state));
+      localStorage.setItem('dna_launcher_v2', JSON.stringify(state));
+    }
+
+    // Abre App Nativo no Android via Intent ou Link Universal
+    function launchExternalApp(app) {
+      if (app.url.startsWith('tel:')) {
+        window.location.href = app.url;
+        return;
+      }
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (isAndroid && app.pkg) {
+        const cleanUrl = app.url.replace(/^https?:\/\//, '');
+        const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;package=${app.pkg};S.browser_fallback_url=${encodeURIComponent(app.url)};end`;
+        window.location.href = intentUrl;
+      } else {
+        window.open(app.url, '_blank', 'noopener');
+      }
+    }
+
+    // Lista Unificada (Nativos + Celular Indexados + Web Apps Personalizados)
+    function getAllApps() {
+      const phoneSelected = PHONE_CATALOG
+        .filter(p => state.indexedPhoneIds.includes(p.id))
+        .map(p => ({
+          ...p,
+          isPhoneApp: true,
+          action: () => launchExternalApp(p)
+        }));
+
+      const webApps = state.customWebApps.map(w => ({
+        ...w,
+        isWebApp: true,
+        action: () => window.open(w.url, '_blank', 'noopener')
+      }));
+
+      return [...phoneSelected, ...webApps, ...CORE_APPS];
     }
 
     function applyVisualState() {
@@ -758,19 +934,27 @@
       applyVisualState();
     });
 
-    // Renderização dos Apps com Efeito Tilt 3D
     function createAppElement(app, index, hideLabel = false) {
       const el = document.createElement('div');
       el.className = 'app-item';
       el.style.setProperty('--idx', index);
+
+      let innerIcon = `<span class="app-glyph">${app.icon || '🌐'}</span>`;
+      if (app.favicon) {
+        innerIcon = `<img class="favicon-holo" src="${app.favicon}" onerror="this.outerHTML='<span class=\\'app-glyph\\'>${app.icon || '🌐'}</span>'" alt="" />`;
+      }
+
+      const badgeHtml = app.isWebApp && !hideLabel ? `<span class="web-tag">WEB</span>` : '';
+
       el.innerHTML = `
-        <div class="app-icon-wrap" style="--app-bg: ${app.bg}">
-          <span class="app-glyph">${app.icon}</span>
+        <div class="app-icon-wrap" style="--app-bg: ${app.bg || 'linear-gradient(135deg,#0f172a,#1e293b)'}">
+          ${badgeHtml}
+          ${innerIcon}
         </div>
         ${hideLabel ? '' : `<span class="app-label">${app.name}</span>`}
       `;
 
-      // Tilt 3D interativo ao passar dedo/mouse
+      // Inclinação 3D Holográfica
       el.addEventListener('pointermove', (e) => {
         const rect = el.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -784,8 +968,23 @@
 
       el.addEventListener('click', () => {
         if (app.action) app.action();
-        else if (app.url) window.open(app.url, '_blank', 'noopener');
       });
+
+      // Pressionar e segurar para remover Web App personalizado
+      if (app.isWebApp && !hideLabel) {
+        let pressTimer;
+        el.addEventListener('pointerdown', () => {
+          pressTimer = setTimeout(() => {
+            if (confirm(`Remover "${app.name}" da tela inicial?`)) {
+              state.customWebApps = state.customWebApps.filter(w => w.id !== app.id);
+              saveState();
+              renderAll();
+            }
+          }, 700);
+        });
+        el.addEventListener('pointerup', () => clearTimeout(pressTimer));
+        el.addEventListener('pointerleave', () => clearTimeout(pressTimer));
+      }
 
       return el;
     }
@@ -793,35 +992,170 @@
     function renderHome(filter = '') {
       const grid = document.getElementById('home-apps-grid');
       grid.innerHTML = '';
-      const filtered = APPS.filter(a => a.name.toLowerCase().includes(filter.toLowerCase()));
+      const all = getAllApps();
+      const filtered = all.filter(a => a.name.toLowerCase().includes(filter.toLowerCase()));
       filtered.forEach((app, idx) => grid.appendChild(createAppElement(app, idx)));
     }
 
     function renderDock() {
       const dock = document.getElementById('dock-bar');
       dock.innerHTML = '';
-      DOCK_IDS.forEach((id, idx) => {
-        if (id === 'drawer') {
-          dock.appendChild(createAppElement({
-            name: 'Apps',
-            icon: '💠',
-            bg: 'linear-gradient(135deg,#00f5d4,#38bdf8)',
-            action: () => openDrawer()
-          }, idx, true));
-        } else {
-          const app = APPS.find(a => a.id === id);
-          if (app) dock.appendChild(createAppElement(app, idx, true));
-        }
-      });
+      const dockItems = [
+        { name: 'Telefone', icon: '📞', action: () => { window.location.href = 'tel:'; } },
+        { name: 'WhatsApp', icon: '💬', action: () => launchExternalApp(PHONE_CATALOG[0]) },
+        { name: 'Gaveta', icon: '💠', action: () => openDrawer() },
+        { name: '+ Web', icon: '🌐', action: () => openAddWebApp() },
+        { name: 'Ajustes', icon: '⚙️', action: () => openSettings() }
+      ];
+      dockItems.forEach((item, idx) => dock.appendChild(createAppElement(item, idx, true)));
     }
 
+    function renderAll() {
+      renderHome(document.getElementById('app-search').value);
+      renderDock();
+    }
+
+    // =========================================================
+    // 1. INDEXADOR DE APPS DO CELULAR
+    // =========================================================
+    function openPhoneIndexer() {
+      const renderCatalog = (q = '') => {
+        const list = PHONE_CATALOG.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
+        return list.map(app => {
+          const active = state.indexedPhoneIds.includes(app.id);
+          return `
+            <div class="indexer-card ${active ? 'selected' : ''}" onclick="togglePhoneApp('${app.id}')">
+              <span class="ic-emoji">${app.icon}</span>
+              <span class="ic-name">${app.name}</span>
+              <span class="ic-status">${active ? '✓ INDEXADO' : '+ ADICIONAR'}</span>
+            </div>
+          `;
+        }).join('');
+      };
+
+      openModal('📥 Indexar Apps do Celular', `
+        <p style="font-size:12px;color:#94a3b8;line-height:1.4">
+          Toque nos aplicativos que você possui no celular para projetá-los em <b>Holograma 3D</b> na sua tela inicial:
+        </p>
+        <div class="chip-row">
+          <button class="chip active" onclick="indexAllPhoneApps()">Marcar Todos (${PHONE_CATALOG.length})</button>
+          <button class="chip" onclick="clearPhoneApps()">Limpar Seleção</button>
+        </div>
+        <div class="search-pill">
+          <span>🔎</span>
+          <input type="text" id="indexer-filter" placeholder="Filtrar app do celular..." oninput="filterIndexer(this.value)" />
+        </div>
+        <div class="indexer-grid" id="indexer-grid-container">
+          ${renderCatalog()}
+        </div>
+      `);
+
+      window.filterIndexer = (val) => {
+        document.getElementById('indexer-grid-container').innerHTML = renderCatalog(val);
+      };
+    }
+
+    window.togglePhoneApp = (id) => {
+      if (state.indexedPhoneIds.includes(id)) {
+        state.indexedPhoneIds = state.indexedPhoneIds.filter(x => x !== id);
+      } else {
+        state.indexedPhoneIds.push(id);
+      }
+      saveState();
+      renderAll();
+      const q = document.getElementById('indexer-filter')?.value || '';
+      window.filterIndexer(q);
+    };
+
+    window.indexAllPhoneApps = () => {
+      state.indexedPhoneIds = PHONE_CATALOG.map(a => a.id);
+      saveState();
+      renderAll();
+      openPhoneIndexer();
+    };
+
+    window.clearPhoneApps = () => {
+      state.indexedPhoneIds = [];
+      saveState();
+      renderAll();
+      openPhoneIndexer();
+    };
+
+    // =========================================================
+    // 2. ADICIONAR APLICATIVOS WEB / PWA EM HOLOGRAMA
+    // =========================================================
+    function openAddWebApp() {
+      const savedListHtml = state.customWebApps.length
+        ? state.customWebApps.map(w => `
+            <div class="setting-row" style="background:rgba(15,23,42,0.7);padding:10px 12px;border-radius:12px;border:1px solid rgba(217,70,239,0.25)">
+              <span>${w.icon} <b>${w.name}</b></span>
+              <button class="chip" onclick="removeCustomWeb('${w.id}')">Remover</button>
+            </div>
+          `).join('')
+        : `<p style="font-size:12px;color:#64748b">Nenhum aplicativo web adicionado ainda.</p>`;
+
+      openModal('🌐 Adicionar Web App em Holograma', `
+        <div class="holo-form">
+          <p style="font-size:12px;color:#cbd5e1">
+            Cole o link de qualquer site, sistema ou PWA (ex: GitHub Pages, Vercel, ChatGPT, Canva) para transformá-lo em um ícone holográfico:
+          </p>
+          <input class="holo-input" id="web-app-name" placeholder="Nome do App (ex: Meu Sistema)" />
+          <input class="holo-input" id="web-app-url" type="url" placeholder="URL (ex: https://seusite.github.io)" />
+          <input class="holo-input" id="web-app-icon" placeholder="Emoji opcional (ex: 🚀, 🚖, 💼)" maxlength="4" />
+          <button class="holo-primary-btn" onclick="saveNewWebApp()">✨ Projetar Web App em Holograma</button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#a5f3fc;margin-top:4px">Web Apps Holográficos Salvos:</div>
+        ${savedListHtml}
+      `);
+    }
+
+    window.saveNewWebApp = () => {
+      const name = document.getElementById('web-app-name').value.trim();
+      let url = document.getElementById('web-app-url').value.trim();
+      const icon = document.getElementById('web-app-icon').value.trim() || '🌐';
+
+      if (!name || !url) {
+        alert('Preencha o nome e o link (URL) do aplicativo web.');
+        return;
+      }
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+      }
+
+      let favicon = '';
+      try {
+        const domain = new URL(url).hostname;
+        favicon = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+      } catch {}
+
+      state.customWebApps.push({
+        id: 'web_' + Date.now(),
+        name,
+        url,
+        icon,
+        favicon
+      });
+      saveState();
+      renderAll();
+      closeSheet('app-modal');
+    };
+
+    window.removeCustomWeb = (id) => {
+      state.customWebApps = state.customWebApps.filter(w => w.id !== id);
+      saveState();
+      renderAll();
+      openAddWebApp();
+    };
+
+    // Gaveta Completa
     function openDrawer() {
       const sheet = document.getElementById('drawer-sheet');
       const grid = document.getElementById('drawer-apps-grid');
       const renderList = (q = '') => {
         grid.innerHTML = '';
-        APPS.filter(a => a.name.toLowerCase().includes(q.toLowerCase()))
-            .forEach((app, i) => grid.appendChild(createAppElement(app, i)));
+        getAllApps()
+          .filter(a => a.name.toLowerCase().includes(q.toLowerCase()))
+          .forEach((app, i) => grid.appendChild(createAppElement(app, i)));
       };
       renderList();
       document.getElementById('drawer-search').oninput = (e) => renderList(e.target.value);
@@ -832,7 +1166,7 @@
       document.getElementById(id).classList.remove('open');
     }
 
-    // Busca na Tela Inicial
+    // Busca na Home
     document.getElementById('app-search').addEventListener('input', (e) => {
       renderHome(e.target.value);
     });
@@ -855,7 +1189,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Bateria Real (quando suportado pelo navegador)
+    // Bateria Real
     if (navigator.getBattery) {
       navigator.getBattery().then(bat => {
         const updateBat = () => {
@@ -867,16 +1201,13 @@
       });
     }
 
-    // Mini Player Sintetizado Web Audio
+    // Player Sintetizado
     const TRACKS = [
       { title: 'Hologram Pulse', artist: 'DNA Synth Audio', freq: 220 },
       { title: 'Neon Orbit 3D', artist: 'Cyber Wave', freq: 261.63 },
       { title: 'Quantum Horizon', artist: 'Deep Space', freq: 329.63 }
     ];
-    let trackIdx = 0;
-    let audioCtx = null;
-    let osc = null;
-    let isPlaying = false;
+    let trackIdx = 0, audioCtx = null, osc = null, isPlaying = false;
 
     function toggleMusic() {
       const btn = document.getElementById('play-track');
@@ -903,17 +1234,14 @@
       trackIdx = (trackIdx + dir + TRACKS.length) % TRACKS.length;
       document.getElementById('track-title').textContent = TRACKS[trackIdx].title;
       document.getElementById('track-artist').textContent = TRACKS[trackIdx].artist;
-      if (isPlaying) {
-        toggleMusic();
-        toggleMusic();
-      }
+      if (isPlaying) { toggleMusic(); toggleMusic(); }
     }
 
     document.getElementById('play-track').onclick = toggleMusic;
     document.getElementById('prev-track').onclick = () => changeTrack(-1);
     document.getElementById('next-track').onclick = () => changeTrack(1);
 
-    // Mini-Apps Funcionais
+    // Mini-Apps
     function openModal(title, html) {
       document.getElementById('modal-title').textContent = title;
       document.getElementById('modal-body').innerHTML = html;
@@ -949,7 +1277,7 @@
     function openNotes() {
       const saved = localStorage.getItem('dna_notes') || '';
       openModal('📝 Notas Holográficas', `
-        <textarea class="notes-area" id="notes-input" placeholder="Digite suas anotações... Salvamento automático ativo.">${saved}</textarea>
+        <textarea class="notes-area" id="notes-input" placeholder="Anotações com salvamento automático...">${saved}</textarea>
       `);
       document.getElementById('notes-input').addEventListener('input', (e) => {
         localStorage.setItem('dna_notes', e.target.value);
@@ -980,21 +1308,10 @@
     function openCamera() {
       openModal('📸 Holo Cam', `
         <video id="cam-feed" autoplay playsinline style="width:100%;border-radius:18px;border:1px solid #00f5d4;background:#000"></video>
-        <p style="font-size:12px;color:#94a3b8;text-align:center">Permita o acesso à câmera no navegador para visualizar o visor holográfico.</p>
       `);
       navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'environment' } })
         .then(stream => { document.getElementById('cam-feed').srcObject = stream; })
         .catch(() => {});
-    }
-
-    function openWeather() {
-      openModal('🌤️ Previsão Holográfica', `
-        <div class="setting-group">
-          <div style="font-size:36px;font-weight:800;color:#00f5d4">23°C</div>
-          <div>Céu limpo • Sensação térmica 24°C</div>
-          <div style="font-size:12px;color:#94a3b8">Umidade: 58% • Vento: 12 km/h</div>
-        </div>
-      `);
     }
 
     function openSettings() {
@@ -1019,35 +1336,26 @@
               <button class="chip ${state.cols === 5 ? 'active' : ''}" onclick="setCols(5)">5 Colunas</button>
             </div>
           </div>
+          <button class="holo-primary-btn" onclick="openPhoneIndexer()">📥 Gerenciar Apps do Celular</button>
+          <button class="action-holo-btn web" style="width:100%;padding:12px" onclick="openAddWebApp()">🌐 Gerenciar Web Apps Holográficos</button>
         </div>
       `);
     }
 
-    window.toggleHoloSetting = () => {
-      state.holo = !state.holo;
-      saveState();
-      applyVisualState();
-      openSettings();
-    };
+    window.toggleHoloSetting = () => { state.holo = !state.holo; saveState(); applyVisualState(); openSettings(); };
+    window.setHoloTheme = (t) => { state.holoTheme = t; saveState(); applyVisualState(); openSettings(); };
+    window.setCols = (c) => { state.cols = c; saveState(); applyVisualState(); openSettings(); };
 
-    window.setHoloTheme = (theme) => {
-      state.holoTheme = theme;
-      saveState();
-      applyVisualState();
-      openSettings();
-    };
-
-    window.setCols = (cols) => {
-      state.cols = cols;
-      saveState();
-      applyVisualState();
-      openSettings();
-    };
-
-    // Inicialização
+    // Inicialização + Boas-vindas na 1ª abertura para indexar os apps
     applyVisualState();
-    renderHome();
-    renderDock();
+    renderAll();
+
+    if (!state.firstRunDone) {
+      state.firstRunDone = true;
+      saveState();
+      setTimeout(() => openPhoneIndexer(), 500);
+    }
   </script>
 </body>
 </html>
+
