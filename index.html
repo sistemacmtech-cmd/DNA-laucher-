@@ -825,33 +825,6 @@
   </div>
 
   <script>
-    // =========================================================
-    // CÓDIGO DA FOTO OFICIAL DNA OS (512x512 PNG + SVG)
-    // =========================================================
-    const DNA_PHOTO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-      <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#040b1a"/>
-          <stop offset="50%" stop-color="#0a1936"/>
-          <stop offset="100%" stop-color="#030712"/>
-        </linearGradient>
-        <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#00f5d4"/>
-          <stop offset="50%" stop-color="#38bdf8"/>
-          <stop offset="100%" stop-color="#d946ef"/>
-        </linearGradient>
-      </defs>
-      <rect width="512" height="512" rx="115" fill="url(#bg)"/>
-      <rect x="12" y="12" width="488" height="488" rx="105" fill="none" stroke="url(#neon)" stroke-width="14"/>
-      <circle cx="256" cy="236" r="165" fill="none" stroke="#00f5d4" stroke-opacity="0.35" stroke-width="8"/>
-      <path d="M185 112 C327 172, 185 292, 327 352" fill="none" stroke="#00f5d4" stroke-width="18" stroke-linecap="round"/>
-      <path d="M327 112 C185 172, 327 292, 185 352" fill="none" stroke="#ff2a85" stroke-width="18" stroke-linecap="round"/>
-      <line x1="205" y1="147" x2="307" y2="147" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
-      <line x1="215" y1="232" x2="297" y2="232" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
-      <line x1="205" y1="317" x2="307" y2="317" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
-      <text x="256" y="445" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="900" text-anchor="middle" letter-spacing="3">DNA OS</text>
-    </svg>`;
-
     function buildPngIconDataUrl(size) {
       const canvas = document.createElement('canvas');
       canvas.width = size;
@@ -1092,7 +1065,8 @@
       { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', action: () => openSettings() }
     ];
 
-    const STORAGE_KEY = 'dna_launcher_permanent_v5';
+    const STORAGE_KEY = 'dna_launcher_permanent_v6';
+    const BACKUP_LS_KEY = 'dna_launcher_backup_v6';
     const DEFAULT_STATE = {
       holo: true,
       holoTheme: 'prismatic',
@@ -1103,11 +1077,55 @@
       firstRunDone: false
     };
 
-    let state = { ...DEFAULT_STATE };
+    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+    function mergeById(listA = [], listB = []) {
+      const map = new Map();
+      for (const item of [...listA, ...listB]) {
+        if (item && item.id && !map.has(item.id)) {
+          map.set(item.id, item);
+        }
+      }
+      return Array.from(map.values());
+    }
+
+    function mergeStateSafely(base, incoming) {
+      if (!incoming || typeof incoming !== 'object') return base;
+      const mergedPhoneIds = Array.from(new Set([
+        ...(Array.isArray(base.indexedPhoneIds) ? base.indexedPhoneIds : []),
+        ...(Array.isArray(incoming.indexedPhoneIds) ? incoming.indexedPhoneIds : [])
+      ]));
+      return {
+        ...base,
+        ...incoming,
+        holo: typeof incoming.holo === 'boolean' ? incoming.holo : base.holo,
+        holoTheme: incoming.holoTheme || base.holoTheme,
+        cols: incoming.cols || base.cols,
+        indexedPhoneIds: mergedPhoneIds,
+        customPlayApps: mergeById(base.customPlayApps, incoming.customPlayApps),
+        customWebApps: mergeById(base.customWebApps, incoming.customWebApps),
+        firstRunDone: Boolean(base.firstRunDone || incoming.firstRunDone)
+      };
+    }
+
+    function readWindowNameBackup() {
+      try {
+        if (!window.name || !window.name.startsWith('DNA_LAUNCHER_STATE:')) return null;
+        return JSON.parse(window.name.slice('DNA_LAUNCHER_STATE:'.length));
+      } catch {
+        return null;
+      }
+    }
+
+    function writeWindowNameBackup(snapshot) {
+      try {
+        window.name = 'DNA_LAUNCHER_STATE:' + JSON.stringify(snapshot);
+      } catch {}
+    }
 
     function openDNA_DB() {
       return new Promise((resolve, reject) => {
-        const req = indexedDB.open('DNALauncherPermanentDB', 1);
+        const req = indexedDB.open('DNALauncherPermanentDB', 2);
         req.onupgradeneeded = () => {
           const db = req.result;
           if (!db.objectStoreNames.contains('store')) {
@@ -1120,32 +1138,58 @@
     }
 
     async function loadPermanentState() {
+      let combined = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+      try {
+        const winBak = readWindowNameBackup();
+        if (winBak) combined = mergeStateSafely(combined, winBak);
+      } catch {}
+
+      try {
+        const bakRaw = localStorage.getItem(BACKUP_LS_KEY);
+        if (bakRaw) combined = mergeStateSafely(combined, JSON.parse(bakRaw));
+      } catch {}
+
       try {
         const lsRaw = localStorage.getItem(STORAGE_KEY);
-        if (lsRaw) state = { ...DEFAULT_STATE, ...JSON.parse(lsRaw) };
-        const db = await openDNA_DB();
-        const tx = db.transaction('store', 'readonly');
-        const req = tx.objectStore('store').get('launcherState');
-        req.onsuccess = () => {
-          if (req.result) {
-            state = { ...DEFAULT_STATE, ...req.result };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            applyVisualState();
-            renderAll();
-          } else {
-            savePermanentState();
-          }
-        };
+        if (lsRaw) combined = mergeStateSafely(combined, JSON.parse(lsRaw));
       } catch {}
+
+      state = combined;
+
+      try {
+        const db = await openDNA_DB();
+        await new Promise((resolve) => {
+          const tx = db.transaction('store', 'readonly');
+          const req = tx.objectStore('store').get('launcherState');
+          req.onsuccess = () => {
+            if (req.result) {
+              state = mergeStateSafely(state, req.result);
+            }
+            resolve();
+          };
+          req.onerror = () => resolve();
+        });
+      } catch {}
+
+      await savePermanentState();
     }
 
     async function savePermanentState() {
       const snapshot = JSON.parse(JSON.stringify(state));
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot)); } catch {}
+      writeWindowNameBackup(snapshot);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+        localStorage.setItem(BACKUP_LS_KEY, JSON.stringify(snapshot));
+      } catch {}
       try {
         const db = await openDNA_DB();
-        const tx = db.transaction('store', 'readwrite');
-        tx.objectStore('store').put(snapshot, 'launcherState');
+        await new Promise((resolve) => {
+          const tx = db.transaction('store', 'readwrite');
+          tx.objectStore('store').put(snapshot, 'launcherState');
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+        });
       } catch {}
     }
 
@@ -1234,7 +1278,7 @@
         let pressTimer;
         el.addEventListener('pointerdown', () => {
           pressTimer = setTimeout(() => {
-            if (confirm(`Deseja excluir "${app.name}" da sua tela inicial?`)) {
+            if (confirm(`Deseja excluir "${app.name}" da sua tela inicial? Ele só será removido se você confirmar.`)) {
               deleteIndexedApp(app.removableType, app.id);
             }
           }, 800);
@@ -1439,6 +1483,41 @@
       }
     };
 
+    window.exportLauncherBackup = () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dna-launcher-apps-backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    window.importLauncherBackup = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/json';
+      input.onchange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(String(reader.result || '{}'));
+            state = mergeStateSafely(state, parsed);
+            savePermanentState();
+            applyVisualState();
+            renderAll();
+            alert('Backup restaurado com sucesso! Todos os seus apps permanecem salvos.');
+          } catch {
+            alert('Arquivo de backup inválido.');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    };
+
     function openDrawer() {
       const sheet = document.getElementById('drawer-sheet');
       const grid = document.getElementById('drawer-apps-grid');
@@ -1619,6 +1698,10 @@
               <button class="chip ${state.cols === 5 ? 'active' : ''}" onclick="setCols(5)">5 Colunas</button>
             </div>
           </div>
+          <div class="chip-row">
+            <button class="chip" onclick="exportLauncherBackup()">⬇️ Exportar Backup Apps</button>
+            <button class="chip" onclick="importLauncherBackup()">⬆️ Restaurar Backup</button>
+          </div>
           <button class="holo-primary-btn" onclick="openInstallModal()">📲 Baixar App na Tela do Celular</button>
           <button class="action-holo-btn" style="width:100%;padding:12px" onclick="openPhoneIndexer()">📥 Gerenciar Apps Play Store</button>
           <button class="action-holo-btn web" style="width:100%;padding:12px" onclick="openAddWebApp()">🌐 Gerenciar Web Apps Holográficos</button>
@@ -1629,6 +1712,10 @@
     window.toggleHoloSetting = () => { state.holo = !state.holo; savePermanentState(); applyVisualState(); openSettings(); };
     window.setHoloTheme = (t) => { state.holoTheme = t; savePermanentState(); applyVisualState(); openSettings(); };
     window.setCols = (c) => { state.cols = c; savePermanentState(); applyVisualState(); openSettings(); };
+
+    window.addEventListener('beforeunload', () => {
+      savePermanentState();
+    });
 
     loadPermanentState().then(() => {
       applyVisualState();
