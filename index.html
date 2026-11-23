@@ -10,8 +10,8 @@
   <meta name="apple-mobile-web-app-title" content="DNA Launcher" />
   <title>DNA Launcher OS — Hologram PWA</title>
   <link id="pwa-manifest-link" rel="manifest" href="./manifest.json" />
-  <link id="apple-icon-link" rel="apple-touch-icon" href="./icon-512.svg" />
-  <link id="favicon-link" rel="icon" type="image/svg+xml" href="./icon-512.svg" />
+  <link id="apple-icon-link" rel="apple-touch-icon" sizes="512x512" href="" />
+  <link id="favicon-link" rel="icon" type="image/png" sizes="512x512" href="" />
 
   <style>
     :root {
@@ -84,7 +84,6 @@
       padding: env(safe-area-inset-top, 10px) 16px env(safe-area-inset-bottom, 14px);
     }
 
-    /* Barra de Status */
     .status-bar {
       display: flex;
       align-items: center;
@@ -115,9 +114,10 @@
     }
 
     .dna-badge img {
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border-radius: 4px;
+      object-fit: cover;
     }
 
     .status-actions {
@@ -159,15 +159,8 @@
       font-weight: 900;
       cursor: pointer;
       box-shadow: 0 0 14px rgba(0, 245, 212, 0.5);
-      animation: pulseGlow 2.2s infinite;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 10px rgba(0, 245, 212, 0.45); }
-      50% { box-shadow: 0 0 18px rgba(0, 245, 212, 0.9); }
-    }
-
-    /* Workspace */
     .workspace {
       flex: 1;
       display: flex;
@@ -176,7 +169,6 @@
       gap: 10px;
     }
 
-    /* Widgets */
     .dna-widgets-row {
       display: grid;
       grid-template-columns: 1.15fr 1fr;
@@ -270,7 +262,6 @@
       border: none;
     }
 
-    /* Botões Rápidos */
     .quick-holo-bar {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -299,7 +290,6 @@
       color: #f5d0fe;
     }
 
-    /* Busca */
     .search-pill {
       display: flex;
       align-items: center;
@@ -324,7 +314,6 @@
       color: #64748b;
     }
 
-    /* Grade de Apps */
     .apps-grid {
       flex: 1;
       display: grid;
@@ -370,9 +359,9 @@
     }
 
     .app-icon-wrap img.favicon-holo {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       object-fit: cover;
       position: relative;
       z-index: 2;
@@ -405,9 +394,6 @@
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
     }
 
-    /* =========================================================
-       MODO HOLOGRAMA 3D
-       ========================================================= */
     body.holo-mode .app-item {
       animation: holoFloat 3.6s ease-in-out infinite;
       animation-delay: calc(var(--idx, 0) * -0.28s);
@@ -497,7 +483,6 @@
       100% { background-position: 0 24px; }
     }
 
-    /* Dock Inferior */
     .dock-bar {
       background: rgba(10, 18, 34, 0.72);
       backdrop-filter: blur(22px);
@@ -519,7 +504,6 @@
       font-size: 23px;
     }
 
-    /* Modais & Sheets */
     .overlay-sheet {
       position: fixed;
       inset: 0;
@@ -572,7 +556,6 @@
       gap: 12px;
     }
 
-    /* Cartão de Instalação com Foto/Ícone do App */
     .install-hero-card {
       background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(6, 78, 59, 0.35));
       border: 1.5px solid rgba(0, 245, 212, 0.55);
@@ -587,8 +570,8 @@
     }
 
     .app-photo-preview {
-      width: 96px;
-      height: 96px;
+      width: 104px;
+      height: 104px;
       border-radius: 24px;
       border: 2px solid #00f5d4;
       box-shadow: 0 0 24px rgba(0, 245, 212, 0.6), 0 0 40px rgba(217, 70, 239, 0.35);
@@ -607,7 +590,6 @@
       text-align: left;
     }
 
-    /* Indexador de Apps da Play Store */
     .indexer-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -638,7 +620,6 @@
     .indexer-card .ic-name { font-size: 11px; font-weight: 700; color: #f8fafc; }
     .indexer-card .ic-status { font-size: 9px; color: #00f5d4; font-weight: 800; }
 
-    /* Formulários */
     .holo-form {
       display: flex;
       flex-direction: column;
@@ -771,14 +752,13 @@
   <div id="grid-floor"></div>
 
   <div id="launcher-shell">
-    <!-- Barra Superior -->
     <header class="status-bar">
       <div class="status-left">
         <span class="dna-badge">
-          <img id="top-app-icon" src="./icon-512.svg" alt="DNA" />
+          <img id="top-app-icon" src="" alt="DNA" />
           DNA OS
         </span>
-        <span id="status-clock">21:10</span>
+        <span id="status-clock">21:18</span>
       </div>
       <div class="status-actions">
         <button id="install-pwa-btn" onclick="openInstallModal()">📲 BAIXAR APP</button>
@@ -787,12 +767,10 @@
       </div>
     </header>
 
-    <!-- Área Principal -->
     <main class="workspace">
-      <!-- Widgets -->
       <section class="dna-widgets-row">
         <div class="widget-card">
-          <div class="clock-big" id="widget-clock">21:10</div>
+          <div class="clock-big" id="widget-clock">21:18</div>
           <div class="date-sub" id="widget-date">domingo, 22 de nov.</div>
           <div class="weather-pill" id="persist-badge">🔒 Salvo Permanente</div>
         </div>
@@ -810,27 +788,22 @@
         </div>
       </section>
 
-      <!-- Botões Rápidos -->
       <section class="quick-holo-bar">
         <button class="action-holo-btn" onclick="openPhoneIndexer()">📥 Apps Play Store</button>
         <button class="action-holo-btn web" onclick="openAddWebApp()">🌐 + Web App Holo</button>
       </section>
 
-      <!-- Busca -->
       <div class="search-pill">
         <span>🔍</span>
         <input type="text" id="app-search" placeholder="Buscar WhatsApp, Play Store, Web App..." autocomplete="off" />
       </div>
 
-      <!-- Grade de Aplicativos em Holograma -->
       <section class="apps-grid" id="home-apps-grid"></section>
     </main>
 
-    <!-- Dock Inferior -->
     <footer class="dock-bar" id="dock-bar"></footer>
   </div>
 
-  <!-- Gaveta Completa -->
   <div class="overlay-sheet" id="drawer-sheet">
     <div class="sheet-header">
       <span class="sheet-title">🧬 Todos os Apps Indexados</span>
@@ -843,7 +816,6 @@
     <div class="apps-grid" id="drawer-apps-grid"></div>
   </div>
 
-  <!-- Modal Dinâmico -->
   <div class="overlay-sheet" id="app-modal">
     <div class="sheet-header">
       <span class="sheet-title" id="modal-title">DNA OS</span>
@@ -854,18 +826,38 @@
 
   <script>
     // =========================================================
-    // GERADOR DE ÍCONE/FOTO PNG DE ALTA DEFINIÇÃO DO APP (512x512)
+    // CÓDIGO DA FOTO OFICIAL DNA OS (512x512 PNG + SVG)
     // =========================================================
-    let APP_ICON_PNG_512 = './icon-512.svg';
-    let APP_ICON_PNG_192 = './icon-512.svg';
+    const DNA_PHOTO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#040b1a"/>
+          <stop offset="50%" stop-color="#0a1936"/>
+          <stop offset="100%" stop-color="#030712"/>
+        </linearGradient>
+        <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#00f5d4"/>
+          <stop offset="50%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#d946ef"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+      <rect x="12" y="12" width="488" height="488" rx="105" fill="none" stroke="url(#neon)" stroke-width="14"/>
+      <circle cx="256" cy="236" r="165" fill="none" stroke="#00f5d4" stroke-opacity="0.35" stroke-width="8"/>
+      <path d="M185 112 C327 172, 185 292, 327 352" fill="none" stroke="#00f5d4" stroke-width="18" stroke-linecap="round"/>
+      <path d="M327 112 C185 172, 327 292, 185 352" fill="none" stroke="#ff2a85" stroke-width="18" stroke-linecap="round"/>
+      <line x1="205" y1="147" x2="307" y2="147" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+      <line x1="215" y1="232" x2="297" y2="232" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+      <line x1="205" y1="317" x2="307" y2="317" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+      <text x="256" y="445" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="900" text-anchor="middle" letter-spacing="3">DNA OS</text>
+    </svg>`;
 
-    function generateHDAppIcon(size) {
+    function buildPngIconDataUrl(size) {
       const canvas = document.createElement('canvas');
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext('2d');
 
-      // Fundo escuro arredondado estilo App Nativo
       const r = size * 0.22;
       ctx.beginPath();
       ctx.moveTo(r, 0);
@@ -881,12 +873,11 @@
 
       const bgGrad = ctx.createLinearGradient(0, 0, size, size);
       bgGrad.addColorStop(0, '#040b1a');
-      bgGrad.addColorStop(0.5, '#091833');
+      bgGrad.addColorStop(0.5, '#0a1936');
       bgGrad.addColorStop(1, '#030712');
       ctx.fillStyle = bgGrad;
       ctx.fill();
 
-      // Borda Neon Holográfica
       const borderGrad = ctx.createLinearGradient(0, 0, size, size);
       borderGrad.addColorStop(0, '#00f5d4');
       borderGrad.addColorStop(0.5, '#38bdf8');
@@ -895,26 +886,23 @@
       ctx.strokeStyle = borderGrad;
       ctx.stroke();
 
-      // Anel Orbital Holográfico
       ctx.beginPath();
-      ctx.arc(size / 2, size / 2, size * 0.34, 0, Math.PI * 2);
-      ctx.lineWidth = size * 0.018;
+      ctx.arc(size / 2, size * 0.46, size * 0.32, 0, Math.PI * 2);
+      ctx.lineWidth = size * 0.016;
       ctx.strokeStyle = 'rgba(0, 245, 212, 0.45)';
       ctx.stroke();
 
-      // Dupla Hélice DNA Holográfica 3D
       const steps = 18;
-      const topY = size * 0.24;
-      const botY = size * 0.72;
+      const topY = size * 0.22;
+      const botY = size * 0.69;
       for (let i = 0; i <= steps; i++) {
         const t = i / steps;
         const y = topY + t * (botY - topY);
         const angle = t * Math.PI * 2.4;
-        const amp = size * 0.16;
+        const amp = size * 0.15;
         const x1 = size / 2 + Math.sin(angle) * amp;
         const x2 = size / 2 - Math.sin(angle) * amp;
 
-        // Degrau conector
         ctx.beginPath();
         ctx.moveTo(x1, y);
         ctx.lineTo(x2, y);
@@ -922,42 +910,62 @@
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
         ctx.stroke();
 
-        // Esfera Ciano
         ctx.beginPath();
         ctx.arc(x1, y, size * 0.024, 0, Math.PI * 2);
         ctx.fillStyle = '#00f5d4';
         ctx.fill();
 
-        // Esfera Magenta
         ctx.beginPath();
         ctx.arc(x2, y, size * 0.024, 0, Math.PI * 2);
         ctx.fillStyle = '#ff2a85';
         ctx.fill();
       }
 
-      // Etiqueta "DNA" nítida na base do ícone
       ctx.fillStyle = '#ffffff';
       ctx.font = `900 ${Math.round(size * 0.11)}px -apple-system, BlinkMacSystemFont, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText('DNA OS', size / 2, size * 0.89);
+      ctx.fillText('DNA OS', size / 2, size * 0.88);
 
       return canvas.toDataURL('image/png');
     }
 
-    function applyGeneratedIcons() {
-      try {
-        APP_ICON_PNG_512 = generateHDAppIcon(512);
-        APP_ICON_PNG_192 = generateHDAppIcon(192);
-        document.getElementById('apple-icon-link').href = APP_ICON_PNG_512;
-        document.getElementById('favicon-link').href = APP_ICON_PNG_192;
-        const topIcon = document.getElementById('top-app-icon');
-        if (topIcon) topIcon.src = APP_ICON_PNG_192;
-      } catch {}
+    let ICON_PNG_512 = '';
+    let ICON_PNG_192 = '';
+
+    function initAppPhotoEverywhere() {
+      ICON_PNG_512 = buildPngIconDataUrl(512);
+      ICON_PNG_192 = buildPngIconDataUrl(192);
+
+      document.getElementById('apple-icon-link').href = ICON_PNG_512;
+      document.getElementById('favicon-link').href = ICON_PNG_192;
+      const topIcon = document.getElementById('top-app-icon');
+      if (topIcon) topIcon.src = ICON_PNG_192;
+
+      const dynamicManifest = {
+        id: './index.html',
+        name: 'DNA Launcher OS',
+        short_name: 'DNA Launcher',
+        description: 'Launcher PWA com ícones em holograma 3D interativo',
+        start_url: './index.html',
+        scope: './',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#030712',
+        theme_color: '#030712',
+        icons: [
+          { src: ICON_PNG_192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: ICON_PNG_512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+        ]
+      };
+
+      const blob = new Blob([JSON.stringify(dynamicManifest)], { type: 'application/manifest+json' });
+      const manifestUrl = URL.createObjectURL(blob);
+      const linkEl = document.getElementById('pwa-manifest-link');
+      if (linkEl) linkEl.href = manifestUrl;
     }
 
-    applyGeneratedIcons();
+    initAppPhotoEverywhere();
 
-    // 1. Armazenamento Permanente
     if (navigator.storage && navigator.storage.persist) {
       navigator.storage.persist().then(granted => {
         const badge = document.getElementById('persist-badge');
@@ -965,16 +973,12 @@
       }).catch(() => {});
     }
 
-    // Service Worker Offline
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
 
-    // =========================================================
-    // SISTEMA DE DOWNLOAD / INSTALAÇÃO DIRETA NA TELA DO CELULAR
-    // =========================================================
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -989,14 +993,6 @@
       if (btn) btn.innerHTML = '✅ APP INSTALADO';
     });
 
-    function isStandaloneInstalled() {
-      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    }
-
-    if (isStandaloneInstalled()) {
-      document.getElementById('install-pwa-btn').innerHTML = '✅ APP ATIVO';
-    }
-
     window.triggerDirectInstall = async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -1007,12 +1003,12 @@
         }
         return;
       }
-      alert('Para concluir o download na tela inicial:\n\n• No Android (Chrome): toque nos 3 pontinhos (⋮) no topo direito e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".\n\n• No iPhone (Safari): toque no botão Compartilhar (⬆️) na barra inferior e toque em "Adicionar à Tela de Início".');
+      alert('No Chrome do Android: toque nos 3 pontinhos (⋮) no canto superior direito e escolha "Instalar aplicativo" para usar a foto oficial DNA OS sem o ícone do Chrome.');
     };
 
     window.downloadAppIconFile = () => {
       const a = document.createElement('a');
-      a.href = APP_ICON_PNG_512;
+      a.href = ICON_PNG_512;
       a.download = 'DNA-Launcher-Icone.png';
       a.click();
     };
@@ -1021,30 +1017,29 @@
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       openModal('📲 Baixar App na Tela do Celular', `
         <div class="install-hero-card">
-          <img class="app-photo-preview" src="${APP_ICON_PNG_512}" alt="Ícone DNA Launcher" />
+          <img class="app-photo-preview" src="${ICON_PNG_512}" alt="Ícone DNA Launcher" />
           <div>
             <div style="font-size:17px;font-weight:900;color:#fff">DNA Launcher OS</div>
             <div style="font-size:11px;color:#00f5d4;margin-top:2px">Hologram Edition • PWA Offline</div>
           </div>
           <p style="font-size:12px;color:#cbd5e1;line-height:1.45">
-            Este é o <b>ícone oficial com foto holográfica</b> que ficará visível na tela inicial do seu celular para você identificar o app facilmente.
+            Esta é a <b>foto oficial do aplicativo</b> que vai para a tela inicial do seu celular ao instalar.
           </p>
           <button class="holo-primary-btn" onclick="triggerDirectInstall()">
-            ${deferredPrompt ? '📲 INSTALAR DIRETO NO CELULAR AGORA' : '📲 BAIXAR / ADICIONAR À TELA INICIAL'}
+            ${deferredPrompt ? '📲 INSTALAR DIRETO NO CELULAR AGORA' : '📲 INSTALAR APLICATIVO NA TELA INICIAL'}
           </button>
-          <button class="chip" onclick="downloadAppIconFile()">🖼️ Salvar Foto do Ícone na Galeria (PNG)</button>
+          <button class="chip" onclick="downloadAppIconFile()">🖼️ Baixar Foto do Ícone (PNG 512×512)</button>
         </div>
 
         <div class="step-box">
-          <b style="color:#00f5d4">📌 Como confirmar na tela do seu aparelho:</b><br/>
+          <b style="color:#00f5d4">📌 Dica para não aparecer o "G" nem a bolinha do Chrome:</b><br/>
           ${isIOS
-            ? '1. Toque no ícone <b>Compartilhar (⬆️)</b> na barra inferior do Safari.<br/>2. Role para baixo e toque em <b>"Adicionar à Tela de Início"</b>.<br/>3. O ícone holográfico <b>DNA OS</b> aparecerá junto aos seus apps.'
-            : '1. Se a janela de instalação não abrir automaticamente, toque nos <b>3 pontinhos (⋮)</b> no canto superior do navegador.<br/>2. Toque em <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b>.<br/>3. O ícone holográfico <b>DNA OS</b> será criado na sua tela inicial.'}
+            ? '1. No Safari, toque em <b>Compartilhar (⬆️)</b> > <b>Adicionar à Tela de Início</b>.<br/>2. A foto oficial <b>DNA OS</b> será exibida na tela inicial.'
+            : '1. Apague o atalho antigo com o "G" da tela inicial.<br/>2. No Google Chrome, toque nos <b>3 pontinhos (⋮)</b> e escolha <b>"Instalar aplicativo"</b> (em vez de apenas criar atalho).<br/>3. O ícone da dupla hélice <b>DNA OS</b> aparecerá na tela do celular.'}
         </div>
       `);
     }
 
-    // Catálogo Completo de Apps da Play Store
     const PLAYSTORE_CATALOG = [
       { id: 'whatsapp', name: 'WhatsApp', icon: '💬', url: 'https://api.whatsapp.com/send', pkg: 'com.whatsapp' },
       { id: 'wabusiness', name: 'WhatsApp Biz', icon: '💼', url: 'https://api.whatsapp.com/send', pkg: 'com.whatsapp.w4b' },
@@ -1089,7 +1084,7 @@
     ];
 
     const CORE_APPS = [
-      { id: 'installapp', name: 'Baixar App', icon: '📲', favicon: null, isSystemIcon: true, action: () => openInstallModal() },
+      { id: 'installapp', name: 'Baixar App', isSystemIcon: true, action: () => openInstallModal() },
       { id: 'calc', name: 'Calculadora', icon: '🧮', action: () => openCalculator() },
       { id: 'notes', name: 'Notas Holo', icon: '📝', action: () => openNotes() },
       { id: 'timer', name: 'Cronômetro', icon: '⏱️', action: () => openTimer() },
@@ -1097,8 +1092,7 @@
       { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', action: () => openSettings() }
     ];
 
-    // Banco Permanente (IndexedDB + localStorage)
-    const STORAGE_KEY = 'dna_launcher_permanent_v4';
+    const STORAGE_KEY = 'dna_launcher_permanent_v5';
     const DEFAULT_STATE = {
       holo: true,
       holoTheme: 'prismatic',
@@ -1128,9 +1122,7 @@
     async function loadPermanentState() {
       try {
         const lsRaw = localStorage.getItem(STORAGE_KEY);
-        if (lsRaw) {
-          state = { ...DEFAULT_STATE, ...JSON.parse(lsRaw) };
-        }
+        if (lsRaw) state = { ...DEFAULT_STATE, ...JSON.parse(lsRaw) };
         const db = await openDNA_DB();
         const tx = db.transaction('store', 'readonly');
         const req = tx.objectStore('store').get('launcherState');
@@ -1166,8 +1158,7 @@
       if (isAndroid && app.pkg) {
         const cleanUrl = (app.url || `https://play.google.com/store/apps/details?id=${app.pkg}`).replace(/^https?:\/\//, '');
         const fallback = encodeURIComponent(app.url || `https://play.google.com/store/apps/details?id=${app.pkg}`);
-        const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;package=${app.pkg};S.browser_fallback_url=${fallback};end`;
-        window.location.href = intentUrl;
+        window.location.href = `intent://${cleanUrl}#Intent;scheme=https;package=${app.pkg};S.browser_fallback_url=${fallback};end`;
       } else {
         window.open(app.url || `https://play.google.com/store/search?q=${encodeURIComponent(app.name)}&c=apps`, '_blank', 'noopener');
       }
@@ -1176,23 +1167,14 @@
     function getAllApps() {
       const catalogSelected = PLAYSTORE_CATALOG
         .filter(p => state.indexedPhoneIds.includes(p.id))
-        .map(p => ({
-          ...p,
-          removableType: 'catalog',
-          action: () => launchExternalApp(p)
-        }));
+        .map(p => ({ ...p, removableType: 'catalog', action: () => launchExternalApp(p) }));
 
       const customPlay = (state.customPlayApps || []).map(p => ({
-        ...p,
-        removableType: 'customPlay',
-        action: () => launchExternalApp(p)
+        ...p, removableType: 'customPlay', action: () => launchExternalApp(p)
       }));
 
       const webApps = (state.customWebApps || []).map(w => ({
-        ...w,
-        isWebApp: true,
-        removableType: 'customWeb',
-        action: () => window.open(w.url, '_blank', 'noopener')
+        ...w, isWebApp: true, removableType: 'customWeb', action: () => window.open(w.url, '_blank', 'noopener')
       }));
 
       return [...catalogSelected, ...customPlay, ...webApps, ...CORE_APPS];
@@ -1223,7 +1205,7 @@
 
       let innerIcon = `<span class="app-glyph">${app.icon || '📱'}</span>`;
       if (app.isSystemIcon) {
-        innerIcon = `<img class="favicon-holo" src="${APP_ICON_PNG_192}" alt="DNA App" />`;
+        innerIcon = `<img class="favicon-holo" src="${ICON_PNG_192}" alt="DNA App" />`;
       } else if (app.favicon) {
         innerIcon = `<img class="favicon-holo" src="${app.favicon}" onerror="this.outerHTML='<span class=\\'app-glyph\\'>${app.icon || '🌐'}</span>'" alt="" />`;
       }
@@ -1245,13 +1227,8 @@
         el.style.transform = `perspective(400px) rotateY(${x * 24}deg) rotateX(${-y * 24}deg) scale(1.06)`;
       });
 
-      el.addEventListener('pointerleave', () => {
-        el.style.transform = '';
-      });
-
-      el.addEventListener('click', () => {
-        if (app.action) app.action();
-      });
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+      el.addEventListener('click', () => { if (app.action) app.action(); });
 
       if (app.removableType && !hideLabel) {
         let pressTimer;
@@ -1270,13 +1247,9 @@
     }
 
     function deleteIndexedApp(type, id) {
-      if (type === 'catalog') {
-        state.indexedPhoneIds = state.indexedPhoneIds.filter(x => x !== id);
-      } else if (type === 'customPlay') {
-        state.customPlayApps = state.customPlayApps.filter(x => x.id !== id);
-      } else if (type === 'customWeb') {
-        state.customWebApps = state.customWebApps.filter(x => x.id !== id);
-      }
+      if (type === 'catalog') state.indexedPhoneIds = state.indexedPhoneIds.filter(x => x !== id);
+      else if (type === 'customPlay') state.customPlayApps = state.customPlayApps.filter(x => x.id !== id);
+      else if (type === 'customWeb') state.customWebApps = state.customWebApps.filter(x => x.id !== id);
       savePermanentState();
       renderAll();
     }
@@ -1284,8 +1257,9 @@
     function renderHome(filter = '') {
       const grid = document.getElementById('home-apps-grid');
       grid.innerHTML = '';
-      const filtered = getAllApps().filter(a => a.name.toLowerCase().includes(filter.toLowerCase()));
-      filtered.forEach((app, idx) => grid.appendChild(createAppElement(app, idx)));
+      getAllApps()
+        .filter(a => a.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach((app, idx) => grid.appendChild(createAppElement(app, idx)));
     }
 
     function renderDock() {
@@ -1297,7 +1271,7 @@
         { name: 'WhatsApp', icon: '💬', action: () => launchExternalApp(whatsAppObj) },
         { name: 'Gaveta', icon: '💠', action: () => openDrawer() },
         { name: '+ Play Store', icon: '📥', action: () => openPhoneIndexer() },
-        { name: 'Baixar App', icon: '📲', isSystemIcon: true, action: () => openInstallModal() }
+        { name: 'Baixar App', isSystemIcon: true, action: () => openInstallModal() }
       ];
       dockItems.forEach((item, idx) => dock.appendChild(createAppElement(item, idx, true)));
     }
@@ -1307,20 +1281,20 @@
       renderDock();
     }
 
-    // Indexador Play Store
     function openPhoneIndexer() {
       const renderCatalog = (q = '') => {
-        const list = PLAYSTORE_CATALOG.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
-        return list.map(app => {
-          const active = state.indexedPhoneIds.includes(app.id);
-          return `
-            <div class="indexer-card ${active ? 'selected' : ''}" onclick="togglePhoneApp('${app.id}')">
-              <span class="ic-emoji">${app.icon}</span>
-              <span class="ic-name">${app.name}</span>
-              <span class="ic-status">${active ? '✓ SALVO' : '+ INDEXAR'}</span>
-            </div>
-          `;
-        }).join('');
+        return PLAYSTORE_CATALOG
+          .filter(a => a.name.toLowerCase().includes(q.toLowerCase()))
+          .map(app => {
+            const active = state.indexedPhoneIds.includes(app.id);
+            return `
+              <div class="indexer-card ${active ? 'selected' : ''}" onclick="togglePhoneApp('${app.id}')">
+                <span class="ic-emoji">${app.icon}</span>
+                <span class="ic-name">${app.name}</span>
+                <span class="ic-status">${active ? '✓ SALVO' : '+ INDEXAR'}</span>
+              </div>
+            `;
+          }).join('');
       };
 
       const renderCustomPlayList = () => {
@@ -1340,21 +1314,15 @@
         <p style="font-size:12px;color:#94a3b8;line-height:1.4">
           Marque os aplicativos que você tem no celular (WhatsApp, bancos, redes, etc.). Eles ficam <b>salvos permanentemente</b> e só saem se você excluir.
         </p>
-
         <div class="chip-row">
           <button class="chip active" onclick="indexAllPhoneApps()">Indexar Todos (${PLAYSTORE_CATALOG.length})</button>
           <button class="chip danger" onclick="clearPhoneApps()">Desmarcar Catálogo</button>
         </div>
-
         <div class="search-pill">
           <span>🔎</span>
           <input type="text" id="indexer-filter" placeholder="Buscar WhatsApp, banco, rede social..." oninput="filterIndexer(this.value)" />
         </div>
-
-        <div class="indexer-grid" id="indexer-grid-container">
-          ${renderCatalog()}
-        </div>
-
+        <div class="indexer-grid" id="indexer-grid-container">${renderCatalog()}</div>
         <div class="holo-form" style="margin-top:6px">
           <div style="font-size:12px;font-weight:800;color:#a5f3fc">➕ Indexar Outro App da Play Store (Manual)</div>
           <input class="holo-input" id="custom-play-name" placeholder="Nome do App (ex: Caixa, Kwai, Jogo...)" />
@@ -1362,7 +1330,6 @@
           <input class="holo-input" id="custom-play-icon" placeholder="Emoji do ícone (ex: 🎮, 🏦, 📱)" maxlength="4" />
           <button class="holo-primary-btn" onclick="addCustomPlayApp()">💾 Salvar App Permanentemente</button>
         </div>
-
         ${renderCustomPlayList()}
       `);
 
@@ -1372,15 +1339,11 @@
     }
 
     window.togglePhoneApp = (id) => {
-      if (state.indexedPhoneIds.includes(id)) {
-        state.indexedPhoneIds = state.indexedPhoneIds.filter(x => x !== id);
-      } else {
-        state.indexedPhoneIds.push(id);
-      }
+      if (state.indexedPhoneIds.includes(id)) state.indexedPhoneIds = state.indexedPhoneIds.filter(x => x !== id);
+      else state.indexedPhoneIds.push(id);
       savePermanentState();
       renderAll();
-      const q = document.getElementById('indexer-filter')?.value || '';
-      window.filterIndexer(q);
+      window.filterIndexer(document.getElementById('indexer-filter')?.value || '');
     };
 
     window.indexAllPhoneApps = () => {
@@ -1403,17 +1366,13 @@
       const name = document.getElementById('custom-play-name').value.trim();
       const rawPkg = document.getElementById('custom-play-pkg').value.trim();
       const icon = document.getElementById('custom-play-icon').value.trim() || '📱';
-
       if (!name) { alert('Digite o nome do aplicativo.'); return; }
-
       let pkg = '';
       if (rawPkg.includes('id=')) pkg = rawPkg.split('id=')[1].split('&')[0];
       else if (rawPkg.includes('.')) pkg = rawPkg;
-
       const url = pkg
         ? `https://play.google.com/store/apps/details?id=${pkg}`
         : `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
-
       state.customPlayApps.push({ id: 'play_' + Date.now(), name, icon, pkg, url });
       savePermanentState();
       renderAll();
@@ -1429,7 +1388,6 @@
       }
     };
 
-    // Web Apps em Holograma
     function openAddWebApp() {
       const savedListHtml = state.customWebApps.length
         ? state.customWebApps.map(w => `
@@ -1459,16 +1417,13 @@
       const name = document.getElementById('web-app-name').value.trim();
       let url = document.getElementById('web-app-url').value.trim();
       const icon = document.getElementById('web-app-icon').value.trim() || '🌐';
-
       if (!name || !url) { alert('Preencha o nome e o link (URL) do aplicativo web.'); return; }
       if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-
       let favicon = '';
       try {
         const domain = new URL(url).hostname;
         favicon = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
       } catch {}
-
       state.customWebApps.push({ id: 'web_' + Date.now(), name, url, icon, favicon });
       savePermanentState();
       renderAll();
@@ -1484,7 +1439,6 @@
       }
     };
 
-    // Gaveta
     function openDrawer() {
       const sheet = document.getElementById('drawer-sheet');
       const grid = document.getElementById('drawer-apps-grid');
@@ -1510,7 +1464,6 @@
       }
     });
 
-    // Relógio
     function updateClock() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1522,7 +1475,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Bateria
     if (navigator.getBattery) {
       navigator.getBattery().then(bat => {
         const updateBat = () => {
@@ -1534,7 +1486,6 @@
       });
     }
 
-    // Player
     const TRACKS = [
       { title: 'Hologram Pulse', artist: 'DNA Synth Audio', freq: 220 },
       { title: 'Neon Orbit 3D', artist: 'Cyber Wave', freq: 261.63 },
@@ -1574,7 +1525,6 @@
     document.getElementById('prev-track').onclick = () => changeTrack(-1);
     document.getElementById('next-track').onclick = () => changeTrack(1);
 
-    // Mini-Apps
     function openModal(title, html) {
       document.getElementById('modal-title').textContent = title;
       document.getElementById('modal-body').innerHTML = html;
@@ -1680,7 +1630,6 @@
     window.setHoloTheme = (t) => { state.holoTheme = t; savePermanentState(); applyVisualState(); openSettings(); };
     window.setCols = (c) => { state.cols = c; savePermanentState(); applyVisualState(); openSettings(); };
 
-    // Inicialização
     loadPermanentState().then(() => {
       applyVisualState();
       renderAll();
