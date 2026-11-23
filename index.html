@@ -4,12 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#030712" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="DNA Launcher" />
   <title>DNA Launcher OS — Hologram PWA</title>
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300f5d4'/%3E%3Cstop offset='50%25' stop-color='%2338bdf8'/%3E%3Cstop offset='100%25' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='115' fill='%23030712'/%3E%3Ccircle cx='256' cy='256' r='175' fill='none' stroke='url(%23g)' stroke-width='24'/%3E%3Cpath d='M180 140 C332 200, 180 312, 332 372 M332 140 C180 200, 332 312, 180 372' stroke='%23ffffff' stroke-width='20' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link id="pwa-manifest-link" rel="manifest" href="./manifest.json" />
+  <link id="apple-icon-link" rel="apple-touch-icon" href="./icon-512.svg" />
+  <link id="favicon-link" rel="icon" type="image/svg+xml" href="./icon-512.svg" />
 
   <style>
     :root {
@@ -101,7 +103,7 @@
     .dna-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       padding: 3px 9px;
       border-radius: 999px;
       background: rgba(0, 245, 212, 0.12);
@@ -110,6 +112,12 @@
       font-size: 11px;
       font-weight: 700;
       text-shadow: 0 0 8px rgba(0, 245, 212, 0.6);
+    }
+
+    .dna-badge img {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
     }
 
     .status-actions {
@@ -122,7 +130,7 @@
       background: rgba(0, 245, 212, 0.14);
       border: 1px solid rgba(0, 245, 212, 0.45);
       color: #00f5d4;
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 999px;
       font-size: 10px;
       font-weight: 800;
@@ -139,15 +147,24 @@
     }
 
     #install-pwa-btn {
-      display: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       background: linear-gradient(135deg, #00f5d4, #38bdf8);
       color: #030712;
       border: none;
-      padding: 3px 8px;
+      padding: 4px 9px;
       border-radius: 999px;
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
+      box-shadow: 0 0 14px rgba(0, 245, 212, 0.5);
+      animation: pulseGlow 2.2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(0, 245, 212, 0.45); }
+      50% { box-shadow: 0 0 18px rgba(0, 245, 212, 0.9); }
     }
 
     /* Workspace */
@@ -353,9 +370,9 @@
     }
 
     .app-icon-wrap img.favicon-holo {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
       object-fit: cover;
       position: relative;
       z-index: 2;
@@ -555,6 +572,41 @@
       gap: 12px;
     }
 
+    /* Cartão de Instalação com Foto/Ícone do App */
+    .install-hero-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(6, 78, 59, 0.35));
+      border: 1.5px solid rgba(0, 245, 212, 0.55);
+      border-radius: 22px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      box-shadow: 0 0 28px rgba(0, 245, 212, 0.2);
+    }
+
+    .app-photo-preview {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      border: 2px solid #00f5d4;
+      box-shadow: 0 0 24px rgba(0, 245, 212, 0.6), 0 0 40px rgba(217, 70, 239, 0.35);
+      object-fit: cover;
+      background: #030712;
+    }
+
+    .step-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 13px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      text-align: left;
+    }
+
     /* Indexador de Apps da Play Store */
     .indexer-grid {
       display: grid;
@@ -722,11 +774,14 @@
     <!-- Barra Superior -->
     <header class="status-bar">
       <div class="status-left">
-        <span class="dna-badge">🧬 DNA OS</span>
-        <span id="status-clock">20:56</span>
+        <span class="dna-badge">
+          <img id="top-app-icon" src="./icon-512.svg" alt="DNA" />
+          DNA OS
+        </span>
+        <span id="status-clock">21:10</span>
       </div>
       <div class="status-actions">
-        <button id="install-pwa-btn">📲 INSTALAR</button>
+        <button id="install-pwa-btn" onclick="openInstallModal()">📲 BAIXAR APP</button>
         <button id="holo-toggle-btn" class="holo-pill-btn">HOLO ON</button>
         <span id="battery-txt">100% ⚡</span>
       </div>
@@ -737,9 +792,9 @@
       <!-- Widgets -->
       <section class="dna-widgets-row">
         <div class="widget-card">
-          <div class="clock-big" id="widget-clock">20:56</div>
+          <div class="clock-big" id="widget-clock">21:10</div>
           <div class="date-sub" id="widget-date">domingo, 22 de nov.</div>
-          <div class="weather-pill" id="persist-badge">🔒 Memória Permanente</div>
+          <div class="weather-pill" id="persist-badge">🔒 Salvo Permanente</div>
         </div>
 
         <div class="widget-card music-widget">
@@ -798,7 +853,111 @@
   </div>
 
   <script>
-    // 1. Solicita armazenamento permanente ao navegador/Android para NUNCA apagar dados
+    // =========================================================
+    // GERADOR DE ÍCONE/FOTO PNG DE ALTA DEFINIÇÃO DO APP (512x512)
+    // =========================================================
+    let APP_ICON_PNG_512 = './icon-512.svg';
+    let APP_ICON_PNG_192 = './icon-512.svg';
+
+    function generateHDAppIcon(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Fundo escuro arredondado estilo App Nativo
+      const r = size * 0.22;
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(size - r, 0);
+      ctx.quadraticCurveTo(size, 0, size, r);
+      ctx.lineTo(size, size - r);
+      ctx.quadraticCurveTo(size, size, size - r, size);
+      ctx.lineTo(r, size);
+      ctx.quadraticCurveTo(0, size, 0, size - r);
+      ctx.lineTo(0, r);
+      ctx.quadraticCurveTo(0, 0, r, 0);
+      ctx.closePath();
+
+      const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+      bgGrad.addColorStop(0, '#040b1a');
+      bgGrad.addColorStop(0.5, '#091833');
+      bgGrad.addColorStop(1, '#030712');
+      ctx.fillStyle = bgGrad;
+      ctx.fill();
+
+      // Borda Neon Holográfica
+      const borderGrad = ctx.createLinearGradient(0, 0, size, size);
+      borderGrad.addColorStop(0, '#00f5d4');
+      borderGrad.addColorStop(0.5, '#38bdf8');
+      borderGrad.addColorStop(1, '#d946ef');
+      ctx.lineWidth = size * 0.032;
+      ctx.strokeStyle = borderGrad;
+      ctx.stroke();
+
+      // Anel Orbital Holográfico
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.34, 0, Math.PI * 2);
+      ctx.lineWidth = size * 0.018;
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.45)';
+      ctx.stroke();
+
+      // Dupla Hélice DNA Holográfica 3D
+      const steps = 18;
+      const topY = size * 0.24;
+      const botY = size * 0.72;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const y = topY + t * (botY - topY);
+        const angle = t * Math.PI * 2.4;
+        const amp = size * 0.16;
+        const x1 = size / 2 + Math.sin(angle) * amp;
+        const x2 = size / 2 - Math.sin(angle) * amp;
+
+        // Degrau conector
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.lineWidth = size * 0.012;
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+        ctx.stroke();
+
+        // Esfera Ciano
+        ctx.beginPath();
+        ctx.arc(x1, y, size * 0.024, 0, Math.PI * 2);
+        ctx.fillStyle = '#00f5d4';
+        ctx.fill();
+
+        // Esfera Magenta
+        ctx.beginPath();
+        ctx.arc(x2, y, size * 0.024, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff2a85';
+        ctx.fill();
+      }
+
+      // Etiqueta "DNA" nítida na base do ícone
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `900 ${Math.round(size * 0.11)}px -apple-system, BlinkMacSystemFont, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('DNA OS', size / 2, size * 0.89);
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function applyGeneratedIcons() {
+      try {
+        APP_ICON_PNG_512 = generateHDAppIcon(512);
+        APP_ICON_PNG_192 = generateHDAppIcon(192);
+        document.getElementById('apple-icon-link').href = APP_ICON_PNG_512;
+        document.getElementById('favicon-link').href = APP_ICON_PNG_192;
+        const topIcon = document.getElementById('top-app-icon');
+        if (topIcon) topIcon.src = APP_ICON_PNG_192;
+      } catch {}
+    }
+
+    applyGeneratedIcons();
+
+    // 1. Armazenamento Permanente
     if (navigator.storage && navigator.storage.persist) {
       navigator.storage.persist().then(granted => {
         const badge = document.getElementById('persist-badge');
@@ -813,24 +972,79 @@
       });
     }
 
-    // Prompt de Instalação PWA
-    let deferredPrompt;
-    const installBtn = document.getElementById('install-pwa-btn');
+    // =========================================================
+    // SISTEMA DE DOWNLOAD / INSTALAÇÃO DIRETA NA TELA DO CELULAR
+    // =========================================================
+    let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installBtn.style.display = 'inline-block';
+      const btn = document.getElementById('install-pwa-btn');
+      if (btn) btn.innerHTML = '📲 INSTALAR AGORA';
     });
 
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
+    window.addEventListener('appinstalled', () => {
       deferredPrompt = null;
-      installBtn.style.display = 'none';
+      const btn = document.getElementById('install-pwa-btn');
+      if (btn) btn.innerHTML = '✅ APP INSTALADO';
     });
 
-    // Catálogo Completo de Apps da Play Store (incluindo WhatsApp, Redes, Bancos, Transporte, Google, etc.)
+    function isStandaloneInstalled() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    if (isStandaloneInstalled()) {
+      document.getElementById('install-pwa-btn').innerHTML = '✅ APP ATIVO';
+    }
+
+    window.triggerDirectInstall = async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          deferredPrompt = null;
+          closeSheet('app-modal');
+        }
+        return;
+      }
+      alert('Para concluir o download na tela inicial:\n\n• No Android (Chrome): toque nos 3 pontinhos (⋮) no topo direito e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".\n\n• No iPhone (Safari): toque no botão Compartilhar (⬆️) na barra inferior e toque em "Adicionar à Tela de Início".');
+    };
+
+    window.downloadAppIconFile = () => {
+      const a = document.createElement('a');
+      a.href = APP_ICON_PNG_512;
+      a.download = 'DNA-Launcher-Icone.png';
+      a.click();
+    };
+
+    function openInstallModal() {
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      openModal('📲 Baixar App na Tela do Celular', `
+        <div class="install-hero-card">
+          <img class="app-photo-preview" src="${APP_ICON_PNG_512}" alt="Ícone DNA Launcher" />
+          <div>
+            <div style="font-size:17px;font-weight:900;color:#fff">DNA Launcher OS</div>
+            <div style="font-size:11px;color:#00f5d4;margin-top:2px">Hologram Edition • PWA Offline</div>
+          </div>
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.45">
+            Este é o <b>ícone oficial com foto holográfica</b> que ficará visível na tela inicial do seu celular para você identificar o app facilmente.
+          </p>
+          <button class="holo-primary-btn" onclick="triggerDirectInstall()">
+            ${deferredPrompt ? '📲 INSTALAR DIRETO NO CELULAR AGORA' : '📲 BAIXAR / ADICIONAR À TELA INICIAL'}
+          </button>
+          <button class="chip" onclick="downloadAppIconFile()">🖼️ Salvar Foto do Ícone na Galeria (PNG)</button>
+        </div>
+
+        <div class="step-box">
+          <b style="color:#00f5d4">📌 Como confirmar na tela do seu aparelho:</b><br/>
+          ${isIOS
+            ? '1. Toque no ícone <b>Compartilhar (⬆️)</b> na barra inferior do Safari.<br/>2. Role para baixo e toque em <b>"Adicionar à Tela de Início"</b>.<br/>3. O ícone holográfico <b>DNA OS</b> aparecerá junto aos seus apps.'
+            : '1. Se a janela de instalação não abrir automaticamente, toque nos <b>3 pontinhos (⋮)</b> no canto superior do navegador.<br/>2. Toque em <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b>.<br/>3. O ícone holográfico <b>DNA OS</b> será criado na sua tela inicial.'}
+        </div>
+      `);
+    }
+
+    // Catálogo Completo de Apps da Play Store
     const PLAYSTORE_CATALOG = [
       { id: 'whatsapp', name: 'WhatsApp', icon: '💬', url: 'https://api.whatsapp.com/send', pkg: 'com.whatsapp' },
       { id: 'wabusiness', name: 'WhatsApp Biz', icon: '💼', url: 'https://api.whatsapp.com/send', pkg: 'com.whatsapp.w4b' },
@@ -875,6 +1089,7 @@
     ];
 
     const CORE_APPS = [
+      { id: 'installapp', name: 'Baixar App', icon: '📲', favicon: null, isSystemIcon: true, action: () => openInstallModal() },
       { id: 'calc', name: 'Calculadora', icon: '🧮', action: () => openCalculator() },
       { id: 'notes', name: 'Notas Holo', icon: '📝', action: () => openNotes() },
       { id: 'timer', name: 'Cronômetro', icon: '⏱️', action: () => openTimer() },
@@ -882,10 +1097,8 @@
       { id: 'settings', name: 'Ajustes DNA', icon: '⚙️', action: () => openSettings() }
     ];
 
-    // =========================================================
-    // BANCO PERMANENTE (IndexedDB + localStorage)
-    // =========================================================
-    const STORAGE_KEY = 'dna_launcher_permanent_v3';
+    // Banco Permanente (IndexedDB + localStorage)
+    const STORAGE_KEY = 'dna_launcher_permanent_v4';
     const DEFAULT_STATE = {
       holo: true,
       holoTheme: 'prismatic',
@@ -931,16 +1144,12 @@
             savePermanentState();
           }
         };
-      } catch (e) {
-        console.warn('Fallback para localStorage:', e);
-      }
+      } catch {}
     }
 
     async function savePermanentState() {
       const snapshot = JSON.parse(JSON.stringify(state));
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-      } catch {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot)); } catch {}
       try {
         const db = await openDNA_DB();
         const tx = db.transaction('store', 'readwrite');
@@ -948,7 +1157,6 @@
       } catch {}
     }
 
-    // Abre App da Play Store instalado no Android via Intent ou Link Universal
     function launchExternalApp(app) {
       if (app.url && app.url.startsWith('tel:')) {
         window.location.href = app.url;
@@ -1014,7 +1222,9 @@
       el.style.setProperty('--idx', index);
 
       let innerIcon = `<span class="app-glyph">${app.icon || '📱'}</span>`;
-      if (app.favicon) {
+      if (app.isSystemIcon) {
+        innerIcon = `<img class="favicon-holo" src="${APP_ICON_PNG_192}" alt="DNA App" />`;
+      } else if (app.favicon) {
         innerIcon = `<img class="favicon-holo" src="${app.favicon}" onerror="this.outerHTML='<span class=\\'app-glyph\\'>${app.icon || '🌐'}</span>'" alt="" />`;
       }
 
@@ -1028,7 +1238,6 @@
         ${hideLabel ? '' : `<span class="app-label">${app.name}</span>`}
       `;
 
-      // Inclinação 3D Holográfica
       el.addEventListener('pointermove', (e) => {
         const rect = el.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -1044,7 +1253,6 @@
         if (app.action) app.action();
       });
 
-      // Exclusão SOMENTE se o usuário segurar o dedo por 800ms e confirmar
       if (app.removableType && !hideLabel) {
         let pressTimer;
         el.addEventListener('pointerdown', () => {
@@ -1089,7 +1297,7 @@
         { name: 'WhatsApp', icon: '💬', action: () => launchExternalApp(whatsAppObj) },
         { name: 'Gaveta', icon: '💠', action: () => openDrawer() },
         { name: '+ Play Store', icon: '📥', action: () => openPhoneIndexer() },
-        { name: '+ Web', icon: '🌐', action: () => openAddWebApp() }
+        { name: 'Baixar App', icon: '📲', isSystemIcon: true, action: () => openInstallModal() }
       ];
       dockItems.forEach((item, idx) => dock.appendChild(createAppElement(item, idx, true)));
     }
@@ -1099,9 +1307,7 @@
       renderDock();
     }
 
-    // =========================================================
-    // INDEXADOR DE APPS DA PLAY STORE (CATÁLOGO + PERSONALIZADO)
-    // =========================================================
+    // Indexador Play Store
     function openPhoneIndexer() {
       const renderCatalog = (q = '') => {
         const list = PLAYSTORE_CATALOG.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
@@ -1198,29 +1404,17 @@
       const rawPkg = document.getElementById('custom-play-pkg').value.trim();
       const icon = document.getElementById('custom-play-icon').value.trim() || '📱';
 
-      if (!name) {
-        alert('Digite o nome do aplicativo.');
-        return;
-      }
+      if (!name) { alert('Digite o nome do aplicativo.'); return; }
 
       let pkg = '';
-      if (rawPkg.includes('id=')) {
-        pkg = rawPkg.split('id=')[1].split('&')[0];
-      } else if (rawPkg.includes('.')) {
-        pkg = rawPkg;
-      }
+      if (rawPkg.includes('id=')) pkg = rawPkg.split('id=')[1].split('&')[0];
+      else if (rawPkg.includes('.')) pkg = rawPkg;
 
       const url = pkg
         ? `https://play.google.com/store/apps/details?id=${pkg}`
         : `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
 
-      state.customPlayApps.push({
-        id: 'play_' + Date.now(),
-        name,
-        icon,
-        pkg,
-        url
-      });
+      state.customPlayApps.push({ id: 'play_' + Date.now(), name, icon, pkg, url });
       savePermanentState();
       renderAll();
       openPhoneIndexer();
@@ -1235,9 +1429,7 @@
       }
     };
 
-    // =========================================================
-    // ADICIONAR APLICATIVOS WEB / PWA EM HOLOGRAMA
-    // =========================================================
+    // Web Apps em Holograma
     function openAddWebApp() {
       const savedListHtml = state.customWebApps.length
         ? state.customWebApps.map(w => `
@@ -1268,13 +1460,8 @@
       let url = document.getElementById('web-app-url').value.trim();
       const icon = document.getElementById('web-app-icon').value.trim() || '🌐';
 
-      if (!name || !url) {
-        alert('Preencha o nome e o link (URL) do aplicativo web.');
-        return;
-      }
-      if (!/^https?:\/\//i.test(url)) {
-        url = 'https://' + url;
-      }
+      if (!name || !url) { alert('Preencha o nome e o link (URL) do aplicativo web.'); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
       let favicon = '';
       try {
@@ -1282,13 +1469,7 @@
         favicon = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
       } catch {}
 
-      state.customWebApps.push({
-        id: 'web_' + Date.now(),
-        name,
-        url,
-        icon,
-        favicon
-      });
+      state.customWebApps.push({ id: 'web_' + Date.now(), name, url, icon, favicon });
       savePermanentState();
       renderAll();
       openAddWebApp();
@@ -1303,7 +1484,7 @@
       }
     };
 
-    // Gaveta Completa
+    // Gaveta
     function openDrawer() {
       const sheet = document.getElementById('drawer-sheet');
       const grid = document.getElementById('drawer-apps-grid');
@@ -1322,18 +1503,14 @@
       document.getElementById(id).classList.remove('open');
     }
 
-    // Busca na Home
-    document.getElementById('app-search').addEventListener('input', (e) => {
-      renderHome(e.target.value);
-    });
-
+    document.getElementById('app-search').addEventListener('input', (e) => renderHome(e.target.value));
     document.getElementById('app-search').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && e.target.value.trim()) {
         window.open(`https://www.google.com/search?q=${encodeURIComponent(e.target.value)}`, '_blank');
       }
     });
 
-    // Relógio & Data
+    // Relógio
     function updateClock() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1345,7 +1522,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Bateria Real
+    // Bateria
     if (navigator.getBattery) {
       navigator.getBattery().then(bat => {
         const updateBat = () => {
@@ -1357,7 +1534,7 @@
       });
     }
 
-    // Player Sintetizado
+    // Player
     const TRACKS = [
       { title: 'Hologram Pulse', artist: 'DNA Synth Audio', freq: 220 },
       { title: 'Neon Orbit 3D', artist: 'Cyber Wave', freq: 261.63 },
@@ -1492,7 +1669,8 @@
               <button class="chip ${state.cols === 5 ? 'active' : ''}" onclick="setCols(5)">5 Colunas</button>
             </div>
           </div>
-          <button class="holo-primary-btn" onclick="openPhoneIndexer()">📥 Gerenciar Apps Play Store</button>
+          <button class="holo-primary-btn" onclick="openInstallModal()">📲 Baixar App na Tela do Celular</button>
+          <button class="action-holo-btn" style="width:100%;padding:12px" onclick="openPhoneIndexer()">📥 Gerenciar Apps Play Store</button>
           <button class="action-holo-btn web" style="width:100%;padding:12px" onclick="openAddWebApp()">🌐 Gerenciar Web Apps Holográficos</button>
         </div>
       `);
